@@ -8,15 +8,8 @@
   "build": {
     "appId": "com.graf_v3.app",
     "productName": "graf_v3",
-    "target": "NSIS",
-    "directory": "dist",
     "win": {
       "icon": "resources/graph-icon.ico"
-    },
-    "nsis": {
-      "oneClick": false,
-      "perMachine": true,
-      "allowToChangeInstallationDirectory": true
     }
   },
   "scripts": {
