@@ -1,0 +1,55 @@
+name: Build/release app
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        buildType: ['portable', 'non-portable']
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - name: install frontend dependencies
+        run: pnpm install --no-frozen-lockfile # change this to npm or pnpm depending on which one you use
+
+      - name: build-win-portable
+        if: matrix.buildType == 'portable'
+        run: pnpm build:win:portable
+
+      - name: build-win
+        if: matrix.buildType == 'non-portable'
+        run: pnpm build:win
+
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: |
+            dist/*.exe
+            dist/*.zip
+            dist/*.dmg
+            dist/*.AppImage
+            dist/*.snap
+            dist/*.deb
+            dist/*.rpm
+            dist/*.tar.gz
+            dist/*.yml
+            dist/*.blockmap
