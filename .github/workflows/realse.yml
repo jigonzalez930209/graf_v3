@@ -1,9 +1,9 @@
 name: Build/release app
-
 on:
+  workflow_dispatch:
   push:
-    tags:
-      - v*.*.*
+    branches:
+      - main
 
 jobs:
   release:
