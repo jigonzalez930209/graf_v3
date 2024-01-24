@@ -1,0 +1,50 @@
+import { INotification } from '@shared/models/graf'
+import {
+  GetFiles,
+  GetProject,
+  GetTemplates,
+  SaveTemplate,
+  ImportFilesFromLoader,
+  ReadFilesFromPath,
+  SaveProject,
+  SaveExcelFile,
+  GetBinaryFiles
+} from '@shared/types'
+
+declare global {
+  interface Window {
+    context: {
+      locale: string
+
+      // Get files from current path
+      getFiles: GetFiles
+      getGrafState: GetProject
+      getTemplates: GetTemplates
+      getBinaryFiles: GetBinaryFiles
+
+      // Save files to current path
+      saveProject: SaveProject
+      saveTemplate: SaveTemplate
+      saveExcelFile: SaveExcelFile
+
+      // Read files from path
+      readFilesFromPath: ReadFilesFromPath
+
+      // Import files from loader
+      importFilesFromLoader: ImportFilesFromLoader
+
+      onLoadFileInfo: () => Promise<string[] | string>
+
+      openDevTools: () => Promise<void>
+
+      getAppName: () => Promise<string>
+
+      getAppInfo: () => Promise<{
+        name: string
+        version: string
+        arc: string
+        electronVersion: string
+      }>
+    }
+  }
+}

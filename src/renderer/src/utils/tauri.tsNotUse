@@ -1,0 +1,351 @@
+import { Colors, Template, TemplateFile, Variables } from '@/utils/import-dialog-interfaces'
+
+import _ from 'lodash'
+import { read, utils, write } from 'xlsx'
+
+import { IGraftState, ProcessFile } from '../interfaces/interfaces'
+import { extractSerialPoint, fileType } from './common'
+import { COLORS } from './utils'
+
+const Utf8ArrayToStr = (array: Uint8Array): string => {
+  let out, i, c
+  let char2, char3
+
+  out = ''
+  const len = array.length
+  i = 0
+  while (i < len) {
+    c = array[i++]
+    switch (c >> 4) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+      case 6:
+      case 7:
+        // 0xxxxxxx
+        out += String.fromCharCode(c)
+        break
+      case 12:
+      case 13:
+        // 110x xxxx   10xx xxxx
+        char2 = array[i++]
+        out += String.fromCharCode(((c & 0x1f) << 6) | (char2 & 0x3f))
+        break
+      case 14:
+        // 1110 xxxx  10xx xxxx  10xx xxxx
+        char2 = array[i++]
+        char3 = array[i++]
+        out += String.fromCharCode(
+          ((c & 0x0f) << 12) | ((char2 & 0x3f) << 6) | ((char3 & 0x3f) << 0)
+        )
+        break
+    }
+  }
+
+  return out
+}
+
+const readFileContents = async (file) => {
+  return new Promise<Uint8Array>((resolve, reject) => {
+    try {
+      // resolve(readFile(file.path))
+      resolve(file.content)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+const readAllTauriProcess = async (AllFiles) => {
+  // await metadata('/path/to/file')
+  const notSupported: string[] = []
+  let AllFilesArray = []
+  if (typeof AllFiles?.paths?.[0] === 'string') {
+    AllFilesArray = AllFiles.paths.map((file) => ({
+      name: file.match(/\\([^\\]+)$/)[1],
+      path: file
+    }))
+  } else {
+    AllFilesArray = AllFiles
+  }
+
+  const results = await Promise.all(
+    AllFilesArray.filter((file) => {
+      const name = _.last(file.name.split(/\\/g)) as string
+      if (!['csv', 'teq4', 'teq4z'].includes(fileType(name))) {
+        console.log(`File type not supported '${name}'`)
+        notSupported.push(name)
+        return false
+      }
+      return true
+    }).map(async (file) => {
+      const fileContents = await readFileContents(file)
+      const name = _.last(file.name.split(/\\/g)) as string
+
+      if (fileType(name) === 'csv') {
+        const contentXLSX = read(fileContents, { type: 'array' })
+        const content = Object.values(
+          utils.sheet_to_json(contentXLSX.Sheets[contentXLSX.SheetNames[0]])
+        ).map((i) => Object.values(i))
+
+        const columns = Object.keys(
+          utils.sheet_to_json(contentXLSX.Sheets[contentXLSX.SheetNames[0]])[0]
+        )
+        const invariableContent = [columns, ...content]
+
+        const selectedInvariableContentIndex = invariableContent.reduce(
+          (acc, curr, index) =>
+            curr.length > acc.value ? { value: curr.length, index: index } : acc,
+          { index: 0, value: content[0].length }
+        ).index
+
+        return {
+          content,
+          name,
+          invariableContent,
+          selectedInvariableContentIndex,
+          columns: invariableContent[selectedInvariableContentIndex]
+        }
+      }
+      return { content: await Utf8ArrayToStr(fileContents), name }
+    })
+  )
+
+  return { results, notSupported }
+}
+
+const readAllFiles = async (selected) => {
+  const readAllFiles = await readAllTauriProcess(selected)
+  const contents = await extractSerialPoint(await readAllFiles.results)
+  return {
+    contents: contents as ProcessFile[],
+    notSupported: readAllFiles.notSupported
+  }
+}
+
+const readFilesUsingTauriProcess = async () => {
+  const selected = []
+  // await open({
+  //   multiple: true,
+  //   filters: [
+  //     {
+  //       name: '[*.teq4Z] [*.teq4] [*.csv]',
+  //       extensions: ['teq4Z', 'teq4', 'csv']
+  //     }
+  //   ]
+  // })
+  if (Array.isArray(selected)) {
+    const readAll = await readAllFiles(selected)
+    return await readAll.contents.map((f, i) => ({ ...f, color: COLORS[i] }))
+  } else if (selected === null) {
+    console.log('user cancelled the selection')
+  } else {
+    console.log('user selected a single file')
+  }
+}
+
+// const initStorage = async () => {
+//   const store = new Store('.settings.dat')
+
+//   if ((await store.values()).length > 0 && !_.isEmpty(await store.get('files'))) {
+//     return await store.get('files').then((f) => f as ProcessFile[])
+//   }
+//   return [] as ProcessFile[]
+// }
+
+// const saveStorage = async (files: ProcessFile[], path: string) => {
+//   const store = new Store(path ? path : 'current.graft')
+//   await store.set('files', files)
+// }
+
+const openProject = async () => {
+  let notification: { message: string; variant: 'success' | 'error' }
+  let data: IGraftState
+  // try {
+  //   const p = await open({
+  //     title: 'Open Project',
+  //     multiple: false,
+  //     directory: false,
+  //     filters: [{ name: 'Graft Project', extensions: ['graft'] }]
+  //   })
+
+  //   const store = new Store(p.path)
+
+  //   data = await store
+  //     .get('graft')
+  //     .then((d) => d as IGraftState)
+  //     .catch((err) => err)
+  //   notification = {
+  //     message: 'Project opened successfully',
+  //     variant: 'success'
+  //   }
+  // } catch (err) {
+  //   console.log(err)
+  //   notification = {
+  //     message: 'Project not saved. Error occurred while saving',
+  //     variant: 'error'
+  //   }
+  // }
+  // return { data, notification }
+  console.log('openProject')
+}
+
+// const clearStorage = async () => {
+//   const store = new Store('.settings.dat')
+//   await store.clear()
+// }
+
+const saveProject = async (s: IGraftState) => {
+  const notification: { message: string; variant: 'success' | 'error' } = {
+    message: '',
+    variant: 'success'
+  }
+  // try {
+  //   const p = await save({
+  //     title: 'Save Project',
+  //     filters: [{ name: 'Graft project', extensions: ['graft'] }]
+  //   })
+
+  //   const store = new Store(p)
+  //   await store.set('graft', s)
+  //   await store.save()
+  //   notification = {
+  //     message: 'Project saved successfully',
+  //     variant: 'success'
+  //   }
+  // } catch (err) {
+  //   console.log(err)
+  //   notification = {
+  //     message: 'Project not saved. Error occurred while saving',
+  //     variant: 'error'
+  //   }
+  // } finally {
+  //   return notification
+  // }
+  console.log('saveProject')
+}
+
+const saveImportTemplate = async (props: Template) => {
+  // let notification: { message: string; variant: 'success' | 'error' } = {
+  //   message: '',
+  //   variant: 'success'
+  // }
+  // try {
+  //   const p = await save({
+  //     title: 'Save Import Template',
+  //     filters: [{ name: 'Import Template', extensions: ['graftImpTemp'] }]
+  //   })
+
+  //   const store = new Store(p)
+  //   await store.set('template', props)
+  //   await store.save()
+  //   notification = {
+  //     message: 'Template saved successfully',
+  //     variant: 'success'
+  //   }
+  // } catch (err) {
+  //   console.log(err)
+  //   notification = {
+  //     message: 'Template not saved. Error occurred while saving',
+  //     variant: 'error'
+  //   }
+  // } finally {
+  //   return notification
+  // }
+  console.log('saveImportTemplate')
+}
+
+const openImportTemplate = async () => {
+  let notification: { message: string; variant: 'success' | 'error' }
+  let data: Template
+  // try {
+  //   const p = await open({
+  //     title: 'Open Import Template',
+  //     multiple: false,
+  //     directory: false,
+  //     filters: [{ name: 'Import Template', extensions: ['graftImpTemp'] }]
+  //   })
+
+  //   const store = new Store(p.path)
+
+  //   data = await store
+  //     .get('template')
+  //     .then((d) => d as Template)
+  //     .catch((err) => err)
+  //   notification = {
+  //     message: 'Template opened successfully',
+  //     variant: 'success'
+  //   }
+  // } catch (err) {
+  //   console.log(err)
+  //   notification = {
+  //     message: 'Template not saved. Error occurred while saving',
+  //     variant: 'error'
+  //   }
+  // } finally {
+  //   return { data, notification }
+  // }
+  console.log('openImportTemplate')
+}
+
+const openImportTemplates = async () => {
+  let notification: { message: string; variant: 'success' | 'error' }
+  const data: TemplateFile[] = []
+  // try {
+  //   const p = await open({
+  //     title: 'Open Import Template',
+  //     multiple: true,
+  //     directory: false,
+  //     filters: [{ name: 'Import Template', extensions: ['graftImpTemp'] }]
+  //   })
+
+  //   for (const file of p) {
+  //     const store = new Store(file.path)
+
+  //     const template = await store.get('template').then(
+  //       (d) =>
+  //         ({
+  //           name: file.name,
+  //           template: d as Template,
+  //           notification: {
+  //             message: 'Template opened successfully',
+  //             variant: 'success'
+  //           }
+  //         }) as TemplateFile
+  //     )
+
+  //     data.push(template)
+  //   }
+  //   notification = {
+  //     message: 'Template opened successfully',
+  //     variant: 'success'
+  //   }
+  // } catch (err) {
+  //   console.log(err)
+  //   notification = {
+  //     message: 'Template not saved. Error occurred while saving',
+  //     variant: 'error'
+  //   }
+  // } finally {
+  //   return { data, notification }
+  // }
+  console.log('openImportTemplates')
+}
+
+export {
+  readFilesUsingTauriProcess,
+  // initStorage,
+  // saveStorage,
+  // clearStorage,
+  saveProject,
+  openProject,
+  readAllFiles,
+  readFileContents,
+  Utf8ArrayToStr,
+  saveImportTemplate,
+  openImportTemplate,
+  openImportTemplates
+}
