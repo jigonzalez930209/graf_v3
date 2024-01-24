@@ -25,8 +25,8 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
           cache: 'pnpm'
+          node-version: 18
       - name: install frontend dependencies
         run: pnpm install --no-frozen-lockfile # change this to npm or pnpm depending on which one you use
 
@@ -37,6 +37,8 @@ jobs:
       - name: build-win
         if: matrix.buildType == 'non-portable'
         run: pnpm build:win
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
       - name: release
         uses: softprops/action-gh-release@v1
@@ -53,5 +55,5 @@ jobs:
             dist/*.tar.gz
             dist/*.yml
             dist/*.blockmap
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
