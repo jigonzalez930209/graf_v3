@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        buildType: ['portable', 'non-portable']
+        buildType: ['non-portable']
 
     steps:
       - name: Check out Git repository
@@ -53,3 +53,5 @@ jobs:
             dist/*.tar.gz
             dist/*.yml
             dist/*.blockmap
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
