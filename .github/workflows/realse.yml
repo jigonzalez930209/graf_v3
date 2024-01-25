@@ -1,28 +1,39 @@
 
-name: ci
+name: Build
+
 on:
   push:
-    branches: 
-      - main
+    branches: [main]
+    
+
 jobs:
-  test:
+  build:
     runs-on: ${{ matrix.os }}
+
     strategy:
-      fail-fast: false
       matrix:
-        os:
-          - windows-latest
-        node-version:
-          - 18
-    name: Node ${{ matrix.node-version }} on ${{ matrix.os }}
+        os: [windows-latest]
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          version: 8
-      - uses: actions/setup-node@v3
+          node-version: 18
+
+      - name: Install Dependencies
+        run: pnpm i
+
+      - name: Build Release Files
+        run: pnpm run build:win
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: pnpm
-      - run: pnpm i
-      - run: pnpm build:win
+          name: release_on_${{ matrix. os }}
+          path: release/
+          retention-days: 20
