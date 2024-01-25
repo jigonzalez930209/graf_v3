@@ -18,7 +18,10 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 8
-          
+      
+      - name: Install Deps
+        run: pnpm i
+      
       - name: Build/release Electron app
         uses: paneron/action-electron-builder@v1.8.1
         with:
