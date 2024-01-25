@@ -1,59 +1,28 @@
-name: Build/release app
+
+name: ci
 on:
-  workflow_dispatch:
   push:
-    branches:
+    branches: 
       - main
-
 jobs:
-  release:
-    runs-on: windows-latest
-
+  test:
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        buildType: ['non-portable']
-
+        os:
+          - windows-latest
+        node-version:
+          - 18
+    name: Node ${{ matrix.node-version }} on ${{ matrix.os }}
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-
-      - name: setup pnpm
-        uses: pnpm/action-setup@v2
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
         with:
-          version: 8
-
-      - name: setup node
-        uses: actions/setup-node@v3
+          version: 7
+      - uses: actions/setup-node@v3
         with:
-          cache: 'pnpm'
-          node-version: 18
-      - name: install frontend dependencies
-        run: pnpm install --no-frozen-lockfile # change this to npm or pnpm depending on which one you use
-
-      - name: build-win-portable
-        if: matrix.buildType == 'portable'
-        run: pnpm build:win:portable
-
-      - name: build-win
-        if: matrix.buildType == 'non-portable'
-        run: pnpm build:win
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-
-      - name: release
-        uses: softprops/action-gh-release@v1
-        with:
-          draft: true
-          files: |
-            dist/*.exe
-            dist/*.zip
-            dist/*.dmg
-            dist/*.AppImage
-            dist/*.snap
-            dist/*.deb
-            dist/*.rpm
-            dist/*.tar.gz
-            dist/*.yml
-            dist/*.blockmap
-    env:
-      GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build:win
