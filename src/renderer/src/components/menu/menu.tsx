@@ -51,10 +51,7 @@ export function Menu() {
 
             <MenubarSeparator />
             <MenubarShortcut />
-            <MenubarItem>
-              Quit
-              {/* <MenubarShortcut >⌘Q</MenubarShortcut> */}
-            </MenubarItem>
+            <MenubarItem>Quit</MenubarItem>
           </MenubarContent>
           <AboutDialog />
         </Dialog>
