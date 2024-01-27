@@ -100,7 +100,7 @@ app.whenReady().then(() => {
   ipcMain.handle('openDevTools', () =>
     BrowserWindow.getFocusedWindow()?.webContents.openDevTools({
       mode: 'right',
-      activate: false,
+      activate: true,
       title: 'DevTools Graf_v3'
     })
   )

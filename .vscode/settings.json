@@ -9,6 +9,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "cSpell.words": [
+    "asar",
     "autosize",
     "bordercolor",
     "borderwidth",
@@ -24,6 +25,7 @@
     "ianvs",
     "katex",
     "modebar",
+    "nsis",
     "Nyquist",
     "Plotly",
     "reduxjs",
@@ -32,6 +34,7 @@
     "sheetjs",
     "traceorder",
     "typecheck",
+    "vite",
     "Voltametry",
     "webp",
     "xaxis",
