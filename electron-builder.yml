@@ -40,5 +40,4 @@ appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  name: Jose Ivan Gonzalez Jorge
   provider: github
