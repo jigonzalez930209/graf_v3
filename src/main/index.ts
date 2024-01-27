@@ -16,7 +16,9 @@ function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,
-    height: 670,
+    height: 700,
+    minWidth: 800,
+    minHeight: 600,
     show: false,
     autoHideMenuBar: true,
     modal: true,
@@ -29,7 +31,7 @@ function createWindow(): void {
     titleBarOverlay: {
       color: '#2f3241',
       symbolColor: '#74b1be',
-      height: 38
+      height: 40
     },
     trafficLightPosition: { x: 10, y: 10 },
     webPreferences: {
@@ -37,7 +39,6 @@ function createWindow(): void {
       sandbox: true,
       contextIsolation: true,
       nodeIntegration: true
-      // enableRemoteModule: true
     }
   })
 
