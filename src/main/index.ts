@@ -1,5 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
+import { autoUpdater } from 'electron-updater'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/graph-icon.png?asset'
 import { ReadFilesFromPath, SaveExcelFile, SaveProject, SaveTemplate } from '@shared/types'
@@ -99,7 +100,7 @@ app.whenReady().then(() => {
   ipcMain.handle('importFilesFromLoader', () => importFilesFromLoader())
 
   ipcMain.handle('openDevTools', () =>
-    BrowserWindow.getFocusedWindow()?.webContents.openDevTools({
+    BrowserWindow.getAllWindows()?.[0]?.webContents.openDevTools({
       mode: 'right',
       activate: true,
       title: 'DevTools Graf_v3'
@@ -120,6 +121,17 @@ app.whenReady().then(() => {
 
   createWindow()
 
+  // Auto update
+  console.log(autoUpdater.checkForUpdatesAndNotify())
+  autoUpdater.on('update-available', () => {
+    BrowserWindow.getAllWindows()?.[0].webContents.send('update-available')
+  })
+  autoUpdater.on('update-not-available', () => {
+    BrowserWindow.getAllWindows()?.[0].webContents.send('update-not-available')
+  })
+  autoUpdater.on('update-downloaded', () => {
+    BrowserWindow.getAllWindows()?.[0].webContents.send('update-downloaded')
+  })
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.

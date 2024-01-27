@@ -13,7 +13,7 @@ asarUnpack:
   - resources/**
 win:
   executableName: graf_v3
-  icon: graph-icon.ico
+  icon: resources/graph-icon.ico
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
