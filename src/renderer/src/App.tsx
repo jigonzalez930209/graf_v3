@@ -19,8 +19,7 @@ const App = () => {
     window.context
       .onLoadFileInfo()
       .then((x) => {
-        console.log('onLoadFileInfo', x)
-        if (x !== '.' && x !== '..' && x !== '') {
+        if (x !== undefined && x !== '.' && x !== '..' && x !== '') {
           return window.context
             .importFilesFromLoader()
             .then((files) => {
