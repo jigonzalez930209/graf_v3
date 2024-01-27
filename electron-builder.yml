@@ -1,4 +1,4 @@
-appId: com.electron.app
+appId: com.graf_v3_.app
 productName: graf_v3
 directories:
   buildResources: build
@@ -33,11 +33,10 @@ linux:
     - AppImage
     - snap
     - deb
-  maintainer: electronjs.org
+  maintainer: jigonzalez930209
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  provider: github

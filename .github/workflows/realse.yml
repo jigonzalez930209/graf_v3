@@ -1,36 +1,59 @@
-name: Build/release
+name: Release
+on:
+  push:
+    branches:
+      - main
 
-on: push
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  release:
-    runs-on: ${{ matrix.os }}
+  draft_release:
+    permissions:
+      contents: write # Allows this job to create releases
 
     strategy:
+      fail-fast: true
       matrix:
-        os: [windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v1
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
-      - name: Install PNPM
-        uses: pnpm/action-setup@v2
+      - name: Install Node and NPM
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - uses: pnpm/action-setup@v2
         with:
           version: 8
-      
-      - name: Install Deps
-        run: pnpm i
-      
-      - name: Build/release Electron app
-        uses: paneron/action-electron-builder@v1.8.1
-        with:
-          package_manager: pnpm
-          build_script_name: build:win
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
 
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      - run: pnpm install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+
+      - run: pnpm run build
+
+      - name: Compile artifacts 'and upload them to github release'
+        # I use this action because it is capable of retrying multiple times if there are any issues with the distribution server
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 15
+          max_attempts: 6
+          retry_wait_seconds: 15
+          retry_on: error
+          shell: 'bash'
+          # Due to this issue https://github.com/electron-userland/electron-builder/issues/6411 the build with npx when rebuilding native dependencies hangs forever
+          # see https://github.com/cawa-93/vite-electron-builder/pull/953
+          command: ./node_modules/.bin/electron-builder --config electron-builder.yml --publish always
+        env:
+          # Code Signing params
+          # See https://www.electron.build/code-signing
+          # CSC_LINK: ''
+          # CSC_KEY_PASSWORD: ''
+          # Publishing artifacts
+          GH_TOKEN: ${{ secrets.github_token }} # GitHub token, automatically provided (No need to define this secret in the repo settings)
