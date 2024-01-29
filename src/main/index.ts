@@ -121,7 +121,10 @@ app.whenReady().then(() => {
 
   ipcMain.handle('checkUpdates', async () => {
     const result = await autoUpdater.checkForUpdates()
-
+    const version = app.getVersion()
+    if (result?.updateInfo?.version === version) {
+      return undefined
+    }
     return result?.updateInfo
   })
   ipcMain.handle('quitAndInstall', () => {
