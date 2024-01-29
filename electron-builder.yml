@@ -14,6 +14,7 @@ asarUnpack:
 win:
   executableName: graf_v3
   icon: resources/graph-icon.ico
+  publisherName: Jose Ivan Gonzalez Jorge
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -21,6 +22,7 @@ nsis:
   createDesktopShortcut: always
 mac:
   entitlementsInherit: build/entitlements.mac.plist
+  artifactName: ${name}-${version}.${ext}
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
     - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
