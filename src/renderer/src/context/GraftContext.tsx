@@ -13,6 +13,7 @@ import {
   IPlatform
 } from '@shared/models/graf'
 import { IProcessFile } from '@shared/models/files'
+import { UpdateInfo } from 'electron-updater'
 
 export type GrafContextProps = {
   graftState: IGraftState
@@ -36,6 +37,8 @@ export type GrafContextProps = {
   setSelectedFilesCount: (count: number) => void
   setCalcToUniqueFrequency: (calcToUniqueFrequency: FrequencyValues[]) => void
   setSelectFilesToCalcUniqueFrequency: (inputFiles: ConcInputValue[]) => void
+  setUpdateContent: (updateContent: UpdateInfo | null) => void
+  setProgressEvent: (event: IGraftState['progressEvent']) => void
 }
 
 export const GrafContext = React.createContext<GrafContextProps>({} as GrafContextProps)

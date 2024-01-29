@@ -16,6 +16,7 @@ import {
 import { GrafContext } from './GraftContext'
 import { graftReducer } from './graftReducer'
 import { IProcessFile } from '@shared/models/files'
+import { UpdateInfo } from 'electron-updater'
 
 export const INITIAL_STATE: IGraftState = {
   notifications: {
@@ -38,7 +39,14 @@ export const INITIAL_STATE: IGraftState = {
   colorScheme: '1',
   selectedFilesCount: 0,
   uniqueFrequencyCalc: [],
-  concInputValues: []
+  concInputValues: [],
+  updateContent: null,
+  progressEvent: {
+    message: '',
+    name: '',
+    type: undefined,
+    timeOut: 0
+  }
 }
 
 interface props {
@@ -104,6 +112,12 @@ export const GraftProvider = ({ children, initialState }: props) => {
 
   const addFiles = (files: IProcessFile[]) => dispatch({ type: 'addFiles', payload: files })
 
+  const setUpdateContent = (updateContent: UpdateInfo | null) =>
+    dispatch({ type: 'setUpdateContent', payload: updateContent })
+
+  const setProgressEvent = (event: IGraftState['progressEvent']) =>
+    dispatch({ type: 'setProgressEvent', payload: event })
+
   React.useEffect(() => {
     setGraftState(initialState)
   }, [initialState])
@@ -131,7 +145,9 @@ export const GraftProvider = ({ children, initialState }: props) => {
         setColorScheme,
         setSelectedFilesCount,
         setCalcToUniqueFrequency,
-        setSelectFilesToCalcUniqueFrequency
+        setSelectFilesToCalcUniqueFrequency,
+        setUpdateContent,
+        setProgressEvent
       }}
     >
       {children}

@@ -1,5 +1,6 @@
 import { VariantType } from 'notistack'
 import { IProcessFile } from './files'
+import { UpdateInfo } from 'electron-updater'
 
 type INotificationType = 'error' | 'warning' | 'success' | 'info' | undefined | VariantType
 
@@ -27,6 +28,8 @@ interface IGraftState {
   selectedFilesCount: number
   uniqueFrequencyCalc: FrequencyValues[]
   concInputValues: ConcInputValue[]
+  updateContent: UpdateInfo | null
+  progressEvent: IProgressEvent
 }
 
 type IPlatform = 'web' | 'desktop' | null
@@ -85,6 +88,15 @@ type ConcInputValue = {
   value: number
 }
 
+type IProgressEventType = 'progress' | 'error' | 'success' | undefined
+
+type IProgressEvent = {
+  type: IProgressEventType
+  timeOut?: number | undefined
+  name: string
+  message: string
+}
+
 export type {
   IGraftState,
   IFileType,
@@ -99,5 +111,6 @@ export type {
   ConcInputValue,
   SortedByFrequency,
   IColumns,
-  INotification
+  INotification,
+  IProgressEvent
 }

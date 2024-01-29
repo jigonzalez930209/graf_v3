@@ -35,6 +35,8 @@ type GraftAction = {
     | 'setSelectFilesToCalcUniqueFrequency'
     | 'setFile'
     | 'addFiles'
+    | 'setUpdateContent'
+    | 'setProgressEvent'
   payload:
     | INotification
     | IFileType
@@ -52,6 +54,8 @@ type GraftAction = {
     | IColorScheme
     | FrequencyValues[]
     | ConcInputValue[]
+    | IGraftState['updateContent']
+    | IGraftState['progressEvent']
 }
 
 export const graftReducer = (state: IGraftState, action: GraftAction): IGraftState => {
@@ -182,6 +186,20 @@ export const graftReducer = (state: IGraftState, action: GraftAction): IGraftSta
       return {
         ...state,
         files: [...state.files, ...(action.payload as IProcessFile[])]
+      }
+    }
+
+    case 'setUpdateContent': {
+      return {
+        ...state,
+        updateContent: action.payload as IGraftState['updateContent']
+      }
+    }
+
+    case 'setProgressEvent': {
+      return {
+        ...state,
+        progressEvent: action.payload as IGraftState['progressEvent']
       }
     }
 
