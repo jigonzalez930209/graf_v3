@@ -56,11 +56,11 @@ const CustomTooltip = (props: CustomTooltipProps) => {
         </TooltipPrimitive.Trigger>
         <TooltipPrimitive.Portal>
           <TooltipPrimitive.Content
-            className="z-50 mt-1 select-none rounded-[4px] border border-slate-500 bg-background px-[15px] py-[10px] text-[15px] leading-none shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] "
+            className="z-50 mt-1 select-none rounded-[4px] border border-slate-500 bg-background px-[15px] py-[10px] text-[12px] leading-none shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] "
             sideOffset={5}
           >
-            {title && <div className="inline-block text-[12px] font-bold">{title}</div>}{' '}
-            {content && <div className="text-[12]">{content}</div>}
+            {title && <div className="inline-block font-bold">{title}</div>}{' '}
+            {content && <div className="">{content}</div>}
             <TooltipPrimitive.Arrow className=" fill-slate-500" />
           </TooltipPrimitive.Content>
         </TooltipPrimitive.Portal>
