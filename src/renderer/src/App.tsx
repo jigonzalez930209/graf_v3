@@ -13,7 +13,7 @@ import { GrafContext } from './context/GraftContext'
 import { readFilesUnsortedFileType } from './utils/connectors'
 
 const App = () => {
-  const { setFiles, setGraftState } = React.useContext(GrafContext)
+  const { setFiles, setGraftState, setUpdateContent } = React.useContext(GrafContext)
 
   React.useEffect(() => {
     window.context
@@ -47,6 +47,18 @@ const App = () => {
             )
         }
         return
+      })
+      .catch(console.error)
+
+    window.context
+      .checkUpdates()
+      .then((updateInfo) => {
+        if (!updateInfo) return
+        setUpdateContent(updateInfo)
+        enqueueSnackbar(`New version available version ${updateInfo.version}`, {
+          variant: 'info',
+          autoHideDuration: 4000
+        })
       })
       .catch(console.error)
   }, [])
