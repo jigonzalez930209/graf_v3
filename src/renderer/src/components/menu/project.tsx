@@ -68,10 +68,6 @@ export const ProjectMenu = () => {
       })
   }, [])
 
-  const openDevTools = React.useCallback(async () => {
-    await window.context.openDevTools()
-  }, [])
-
   const saveProject = React.useCallback(async () => {
     setLoading(true)
     window.context
@@ -118,11 +114,6 @@ export const ProjectMenu = () => {
         <MenubarItem onClick={saveProject}>
           Save project
           <MenubarShortcut>⌘E</MenubarShortcut>
-        </MenubarItem>
-        <MenubarSeparator />
-        <MenubarItem onClick={openDevTools}>
-          Open Dev Tools
-          <MenubarShortcut>⌘I</MenubarShortcut>
         </MenubarItem>
       </MenubarContent>
     </MenubarMenu>
