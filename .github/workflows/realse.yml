@@ -49,7 +49,16 @@ jobs:
           shell: 'bash'
           # Due to this issue https://github.com/electron-userland/electron-builder/issues/6411 the build with npx when rebuilding native dependencies hangs forever
           # see https://github.com/cawa-93/vite-electron-builder/pull/953
-          command: ./node_modules/.bin/electron-builder --config electron-builder.yml --publish always
+          command: |
+            if matrix.config.os == 'windows-latest'
+              pnpm run dist:win
+            elese if matrix.config.os == 'macos-latest'
+              pnpm run dist:mac
+            else if matrix.config.os == 'ubuntu-latest'
+              pnpm run dist:linux
+
+
+            # ./node_modules/.bin/electron-builder --config electron-builder.yml --publish always
         env:
           # Code Signing params
           # See https://www.electron.build/code-signing
