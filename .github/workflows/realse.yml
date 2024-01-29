@@ -16,12 +16,12 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - uses: actions/checkout@v4
 
       - name: Install Node and NPM
         uses: actions/setup-node@v4
@@ -50,11 +50,11 @@ jobs:
           # Due to this issue https://github.com/electron-userland/electron-builder/issues/6411 the build with npx when rebuilding native dependencies hangs forever
           # see https://github.com/cawa-93/vite-electron-builder/pull/953
           command: |
-            if matrix.config.os == 'windows-latest'
+            if [matrix.config.os == 'windows-latest']
               pnpm run dist:win
-            elese if matrix.config.os == 'macos-latest'
+            elif [matrix.config.os == 'macos-latest']
               pnpm run dist:mac
-            else if matrix.config.os == 'ubuntu-latest'
+            elif [matrix.config.os == 'ubuntu-latest']
               pnpm run dist:linux
 
 
