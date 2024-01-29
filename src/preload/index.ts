@@ -81,6 +81,22 @@ try {
       const { ipcRenderer } = require('electron')
       const appInfo = await ipcRenderer.invoke('getAppInfo')
       return appInfo
+    },
+    checkUpdates: async () => {
+      const { ipcRenderer } = require('electron')
+      return await ipcRenderer.invoke('checkUpdates')
+    },
+    quitAndInstall: async () => {
+      const { ipcRenderer } = require('electron')
+      return await ipcRenderer.invoke('quitAndInstall')
+    },
+    downloadUpdate: async () => {
+      const { ipcRenderer } = require('electron')
+      return await ipcRenderer.invoke('downloadUpdate')
+    },
+    quit: () => {
+      const { ipcRenderer } = require('electron')
+      ipcRenderer.invoke('quit')
     }
   })
 } catch (e) {

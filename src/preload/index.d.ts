@@ -10,6 +10,7 @@ import {
   SaveExcelFile,
   GetBinaryFiles
 } from '@shared/types'
+import { UpdateInfo } from 'electron-updater'
 
 declare global {
   interface Window {
@@ -45,6 +46,11 @@ declare global {
         arc: string
         electronVersion: string
       }>
+      checkUpdates: () => Promise<UpdateInfo>
+      quitAndInstall: () => Promise<void>
+      downloadUpdate: () => Promise<string[]>
+
+      quit: () => void
     }
   }
 }

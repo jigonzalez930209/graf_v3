@@ -13,7 +13,7 @@ import {
   saveExcelFile
 } from './lib/files'
 
-function createWindow(): void {
+const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,
@@ -119,20 +119,29 @@ app.whenReady().then(() => {
     return process.argv[1]
   })
 
+  ipcMain.handle('checkUpdates', async () => {
+    const result = await autoUpdater.checkForUpdates()
+
+    return result?.updateInfo
+  })
+  ipcMain.handle('quitAndInstall', () => {
+    autoUpdater.quitAndInstall(true, true)
+  })
+  ipcMain.handle('downloadUpdate', async () => {
+    autoUpdater.signals.progress((p) => {
+      BrowserWindow.getAllWindows()?.[0].setProgressBar(p.percent / 100, { mode: 'normal' })
+    })
+    const result = await autoUpdater.downloadUpdate()
+    return result
+  })
+
+  ipcMain.handle('quit', () => {
+    app.quit()
+  })
+
   createWindow()
 
-  // Auto update
-  console.log(autoUpdater.checkForUpdatesAndNotify())
-  autoUpdater.on('update-available', () => {
-    BrowserWindow.getAllWindows()?.[0].webContents.send('update-available')
-  })
-  autoUpdater.on('update-not-available', () => {
-    BrowserWindow.getAllWindows()?.[0].webContents.send('update-not-available')
-  })
-  autoUpdater.on('update-downloaded', () => {
-    BrowserWindow.getAllWindows()?.[0].webContents.send('update-downloaded')
-  })
-  app.on('activate', function () {
+  app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
