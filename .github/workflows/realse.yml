@@ -39,6 +39,10 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      - name: Install ubuntu deppendencies
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo snap install snapcraft --classic
+
       # - name: Create Windows installer
       #   if: matrix.os == 'windows-latest'
       #   run: pnpm run dist:win
