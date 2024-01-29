@@ -36,52 +36,39 @@ jobs:
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
-      - run: pnpm run build
+      - name: Build
+        run: pnpm run build
 
-      - name: Create Windows installer
-        if: matrix.os == 'windows-latest'
-        run: pnpm run dist:win
+      # - name: Create Windows installer
+      #   if: matrix.os == 'windows-latest'
+      #   run: pnpm run dist:win
+      #   env:
+      #     GH_TOKEN: ${{ secrets.github_token }}
+
+      # - name: Create macOS installer
+      #   if: matrix.os == 'macos-latest'
+      #   run: pnpm run dist:mac
+      #   env:
+      #     GH_TOKEN: ${{ secrets.github_token }}
+
+      # - name: Create Linux installer
+      #   if: matrix.os == 'ubuntu-latest'
+      #   run: pnpm run dist:linux
+      #   env:
+      #     GH_TOKEN: ${{ secrets.github_token }}
+
+      - name:
+          Compile artifacts 'and upload them to github release'
+          # I use this action because it is capable of retrying multiple times if there are any issues with the distribution server
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 15
+          max_attempts: 5
+          retry_wait_seconds: 15
+          retry_on: error
+          shell: 'bash'
+          command: |
+            ./node_modules/.bin/electron-builder --config --publish always
+
         env:
-          GH_TOKEN: ${{ secrets.github_token }}
-
-      - name: Create macOS installer
-        if: matrix.os == 'macos-latest'
-        run: pnpm run dist:mac
-        env:
-          GH_TOKEN: ${{ secrets.github_token }}
-
-      - name: Create Linux installer
-        if: matrix.os == 'ubuntu-latest'
-        run: pnpm run dist:linux
-        env:
-          GH_TOKEN: ${{ secrets.github_token }}
-
-        # - name: Compile artifacts 'and upload them to github release'
-        #   # I use this action because it is capable of retrying multiple times if there are any issues with the distribution server
-        #   uses: nick-fields/retry@v2
-        #   with:
-        #     timeout_minutes: 15
-        #     max_attempts: 5
-        #     retry_wait_seconds: 15
-        #     retry_on: error
-        #     shell: 'bash'
-        #     # Due to this issue https://github.com/electron-userland/electron-builder/issues/6411 the build with npx when rebuilding native dependencies hangs forever
-        #     # see https://github.com/cawa-93/vite-electron-builder/pull/953
-        #     command: |
-        #     # ./node_modules/.bin/electron-builder --config electron-builder.yml --publish always
-
-        #
-        #       if [matrix.config.os == 'windows-latest']; then
-        #         pnpm run dist:win
-        #       elif [matrix.config.os == 'macos-latest']; then
-        #         pnpm run dist:mac
-        #       elif [matrix.config.os == 'ubuntu-latest']; then
-        #         pnpm run dist:linux
-
-        # env:
-        #   # Code Signing params
-        #   # See https://www.electron.build/code-signing
-        #   # CSC_LINK: ''
-        #   # CSC_KEY_PASSWORD: ''
-        #   # Publishing artifacts
-        #   GH_TOKEN: ${{ secrets.github_token }} # GitHub token, automatically provided (No need to define this secret in the repo settings)
+          GH_TOKEN: ${{ secrets.github_token }} # GitHub token, automatically provided (No need to define this secret in the repo settings)
