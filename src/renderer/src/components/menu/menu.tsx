@@ -16,7 +16,7 @@ import {
 import { Popover, PopoverArrow, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 import { GrafContext } from '@/context/GraftContext'
-import { AboutDialog } from '../about-dialog'
+import { AboutDialog } from './about-dialog'
 import { Settings } from './settings'
 import ExportModal from '../export-dialog'
 import FrequencyAnalysisDialog from '../frequency-analysis/frequency-analysis-dialog'
@@ -26,12 +26,21 @@ import { Dialog, DialogTrigger } from '../ui/dialog'
 import CustomTooltip from '../ui/tooltip'
 import { MenuModeToggle } from './menu-mode-toggle'
 import { ProjectMenu } from './project'
+import EventProgress from './event-progress'
 
 export function Menu() {
   const [name, setName] = React.useState('')
   const {
     graftState: { fileType }
   } = React.useContext(GrafContext)
+
+  const quit = React.useCallback(() => {
+    window.context.quit()
+  }, [])
+
+  const openDevTools = React.useCallback(async () => {
+    await window.context.openDevTools()
+  }, [])
 
   React.useEffect(() => {
     window.context.getAppName().then((name) => setName(name))
@@ -45,13 +54,14 @@ export function Menu() {
         </MenubarTrigger>
         <Dialog modal={false}>
           <MenubarContent>
+            <MenubarSeparator />
+            <MenubarItem onClick={openDevTools}>Open Dev Tools</MenubarItem>
             <DialogTrigger asChild>
-              <MenubarItem>About App</MenubarItem>
+              <MenubarItem>About {name}</MenubarItem>
             </DialogTrigger>
-
             <MenubarSeparator />
             <MenubarShortcut />
-            <MenubarItem>Quit</MenubarItem>
+            <MenubarItem onClick={quit}>Quit</MenubarItem>
           </MenubarContent>
           <AboutDialog />
         </Dialog>
@@ -80,6 +90,7 @@ export function Menu() {
         <FrequencyAnalysisDialog />
         <ImportDialog />
         <ImportFile />
+        <EventProgress />
       </div>
     </Menubar>
   )
