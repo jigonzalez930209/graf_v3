@@ -130,11 +130,16 @@ app.whenReady().then(() => {
   ipcMain.handle('quitAndInstall', () => {
     autoUpdater.quitAndInstall(true, true)
   })
+
   ipcMain.handle('downloadUpdate', async () => {
     autoUpdater.signals.progress((p) => {
       BrowserWindow.getAllWindows()?.[0].setProgressBar(p.percent / 100, { mode: 'normal' })
     })
-    const result = await autoUpdater.downloadUpdate()
+    const result = await autoUpdater
+      .downloadUpdate()
+      .then((r) => r)
+      .catch((e) => e.toString())
+
     return result
   })
 
