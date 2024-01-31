@@ -1,18 +1,18 @@
 {
   "name": "graf_v3",
-  "version": "0.3.49",
+  "version": "0.3.50",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "jigonzalez930209",
-  "homepage": "",
+  "homepage": "https://github.com/jigonzalez930209/graf_v3/releases",
   "build": {
-    "appId": "YourAppID",
+    "appId": "com.jigonzalez930209.graf_v3",
     "asar": true,
     "publish": {
       "provider": "github",
       "owner": "jigonzalez930209",
       "repo": "graf_v3",
-      "releaseType": "draft"
+      "releaseType": "release"
     },
     "productName": "graf_v3",
     "win": {
