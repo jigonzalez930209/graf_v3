@@ -83,12 +83,12 @@ export const readFilesFromPath = async (path: string[]): Promise<GetFile[] | und
 }
 
 export const importFilesFromLoader = async (): Promise<IFileRaw[] | undefined> => {
-  const path = process.argv[1]
+  const path = process.argv[1].toLowerCase()
 
   if (
     path === '.' ||
     path.includes('setup') ||
-    path.includes('mac') ||
+    path.includes('installer') ||
     path.includes('dmg') ||
     path.includes('upd')
   )

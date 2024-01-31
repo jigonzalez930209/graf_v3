@@ -1,6 +1,6 @@
 {
   "name": "graf_v3",
-  "version": "0.3.48",
+  "version": "0.3.49",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "jigonzalez930209",
@@ -36,15 +36,22 @@
     },
     "mac": {
       "target": [
-        "dmg"
+        "dmg",
+        "zip",
+        "pkg"
       ],
-      "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
+      "artifactName": "${productName}-Mac-${version}-Setup.${ext}"
     },
     "linux": {
+      "icon": "resources/graph-icon.png",
+      "category": "Office",
+      "description": "Graf is a data visualization tool for the TEQ4",
       "target": [
-        "AppImage"
+        "deb",
+        "rpm",
+        "tar.gz"
       ],
-      "artifactName": "${productName}-Linux-${version}.${ext}"
+      "artifactName": "${productName}-Linux-${version}-Setup.${ext}"
     }
   },
   "scripts": {
