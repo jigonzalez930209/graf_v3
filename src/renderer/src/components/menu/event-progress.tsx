@@ -1,5 +1,6 @@
-import { GrafContext } from '@renderer/context/GraftContext'
 import React from 'react'
+
+import { GrafContext } from '@renderer/context/GraftContext'
 import { ShieldCloseIcon, ShieldEllipsisIcon, ShieldCheckIcon } from 'lucide-react'
 import CustomTooltip from '../ui/tooltip'
 
@@ -14,7 +15,6 @@ const EventProgress = () => {
     graftState: { progressEvent },
     setProgressEvent
   } = React.useContext(GrafContext)
-  if (!progressEvent.type) return null
 
   React.useEffect(() => {
     if (!progressEvent.timeOut) return
@@ -23,6 +23,8 @@ const EventProgress = () => {
     }, progressEvent.timeOut || 10000)
     return () => clearTimeout(timer)
   }, [progressEvent])
+
+  if (!progressEvent.type) return null
 
   return (
     <span className="mr-40 ml-auto">
