@@ -13,7 +13,8 @@ import { GrafContext } from './context/GraftContext'
 import { readFilesUnsortedFileType } from './utils/connectors'
 
 const App = () => {
-  const { setFiles, setGraftState, setUpdateContent } = React.useContext(GrafContext)
+  const { setFiles, setGraftState, setUpdateContent, setProgressEvent } =
+    React.useContext(GrafContext)
 
   React.useEffect(() => {
     window.context
@@ -23,6 +24,8 @@ const App = () => {
           return window.context
             .importFilesFromLoader()
             .then((files) => {
+              console.log('files', files)
+
               if (files === undefined)
                 return enqueueSnackbar('Something went wrong read the on load the app', {
                   variant: 'error'
@@ -50,17 +53,39 @@ const App = () => {
       })
       .catch(console.error)
 
+    setProgressEvent({
+      type: 'progress',
+      name: 'Checking for updates',
+      message: 'The app is downloading the latest version. Please wait...',
+      timeOut: undefined
+    })
+
     window.context
       .checkUpdates()
       .then((updateInfo) => {
         if (!updateInfo) return
+        console.log('updateInfo', updateInfo)
         setUpdateContent(updateInfo)
+        setProgressEvent({
+          type: 'success',
+          name: `Update available version ${updateInfo.version}`,
+          message: 'Update available',
+          timeOut: 10000
+        })
         enqueueSnackbar(`New version available version ${updateInfo.version}`, {
           variant: 'info',
           autoHideDuration: 4000
         })
       })
-      .catch(console.error)
+      .catch((e) => {
+        console.error(e)
+        setProgressEvent({
+          type: 'error',
+          name: 'Update error',
+          message: 'Error checking for updates',
+          timeOut: 10000
+        })
+      })
   }, [])
 
   return (
