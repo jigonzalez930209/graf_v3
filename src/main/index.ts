@@ -54,6 +54,8 @@ const createWindow = (): void => {
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
+  autoUpdater.autoInstallOnAppQuit = true
+
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
     mainWindow.webContents.openDevTools({
@@ -61,7 +63,18 @@ const createWindow = (): void => {
       activate: false,
       title: 'DevTools Graf_v3'
     })
+
+    autoUpdater.forceDevUpdateConfig = true
+    autoUpdater.autoDownload = true
+    autoUpdater.setFeedURL({
+      provider: 'github',
+      owner: 'jigonzalez930209',
+      repo: 'graf_v3',
+      releaseType: 'release',
+      publisherName: ['jigonzalez930209']
+    })
   } else {
+    autoUpdater.autoDownload = true
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
@@ -72,6 +85,9 @@ const createWindow = (): void => {
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
+  autoUpdater.signals.progress((p) => {
+    BrowserWindow.getAllWindows()?.[0].setProgressBar(p.percent / 100, { mode: 'normal' })
+  })
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
