@@ -1,12 +1,12 @@
 import React from 'react'
 
 import { GrafContext } from '@renderer/context/GraftContext'
-import { ShieldCloseIcon, ShieldEllipsisIcon, ShieldCheckIcon } from 'lucide-react'
+import { ShieldCloseIcon, ShieldEllipsisIcon, ShieldCheckIcon, RefreshCcw } from 'lucide-react'
 import CustomTooltip from '../ui/tooltip'
 
 const icons = {
   error: <ShieldCloseIcon className=" w-5 h-5 text-red-500" />,
-  progress: <ShieldEllipsisIcon className=" w-5 h-5 text-blue-500" />,
+  progress: <RefreshCcw className=" w-5 h-5 text-blue-500 animate-spin delay-500" />,
   success: <ShieldCheckIcon className=" w-5 h-5 text-green-500" />
 }
 
