@@ -1,6 +1,6 @@
 {
   "name": "graf_v3",
-  "version": "0.3.51",
+  "version": "0.3.52",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "jigonzalez930209",
