@@ -11,10 +11,15 @@ import {
   GetBinaryFiles
 } from '@shared/types'
 import { UpdateInfo } from 'electron-updater'
+import { IpcRenderer } from 'electron'
 
 declare global {
   interface Window {
     context: {
+      on: IpcRenderer['on']
+      send: IpcRenderer['send']
+      invoke: IpcRenderer['invoke']
+      removeAllListeners: IpcRenderer['removeAllListeners']
       locale: string
 
       // Get files from current path
