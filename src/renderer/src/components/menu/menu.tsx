@@ -34,6 +34,8 @@ export function Menu() {
     graftState: { fileType }
   } = React.useContext(GrafContext)
 
+  const progress = React.useRef(0)
+
   const quit = React.useCallback(() => {
     window.context.quit()
   }, [])
@@ -42,56 +44,71 @@ export function Menu() {
     await window.context.openDevTools()
   }, [])
 
+  const updateStatus = React.useMemo(() => {}, [progress.current])
+
   React.useEffect(() => {
     window.context.getAppName().then((name) => setName(name))
+    updateStatus
+    window.context.on('download-progress', (_, arg) => {
+      console.log('download-progress', arg)
+      progress.current = arg.percent
+    })
   }, [])
 
   return (
-    <Menubar className="z-50 w-full rounded-none border-b border-none pl-2 lg:pl-3">
-      <MenubarMenu>
-        <MenubarTrigger className="mx-auto min-w-max font-bold capitalize hover:bg-secondary">
-          {name}
-        </MenubarTrigger>
-        <Dialog modal={false}>
-          <MenubarContent>
-            <MenubarSeparator />
-            <MenubarItem onClick={openDevTools}>Open Dev Tools</MenubarItem>
-            <DialogTrigger asChild>
-              <MenubarItem>About {name}</MenubarItem>
-            </DialogTrigger>
-            <MenubarSeparator />
-            <MenubarShortcut />
-            <MenubarItem onClick={quit}>Quit</MenubarItem>
-          </MenubarContent>
-          <AboutDialog />
-        </Dialog>
-      </MenubarMenu>
-      <ProjectMenu />
+    <>
+      <Menubar className="z-50 w-full rounded-none border-none pl-2 lg:pl-3">
+        <MenubarMenu>
+          <MenubarTrigger className="mx-auto min-w-max font-bold capitalize hover:bg-secondary">
+            {name}
+          </MenubarTrigger>
+          <Dialog modal={false}>
+            <MenubarContent>
+              <MenubarSeparator />
+              <MenubarItem onClick={openDevTools}>Open Dev Tools</MenubarItem>
+              <DialogTrigger asChild>
+                <MenubarItem>About {name}</MenubarItem>
+              </DialogTrigger>
+              <MenubarSeparator />
+              <MenubarShortcut />
+              <MenubarItem onClick={quit}>Quit</MenubarItem>
+            </MenubarContent>
+            <AboutDialog />
+          </Dialog>
+        </MenubarMenu>
+        <ProjectMenu />
 
-      <MenuModeToggle />
-      <div className="flex w-full gap-3 pl-4">
-        <Popover>
-          <PopoverTrigger>
-            <CustomTooltip title="Settings" Icon={<SettingsIcon className="h-5 w-5" />} />
-          </PopoverTrigger>
-          <PopoverContent className="h-auto w-auto bg-secondary">
-            <Settings />
-            <PopoverArrow className="fill-primary" />
-          </PopoverContent>
-        </Popover>
-        {!['csv', null].includes(fileType) && (
-          <ExportModal>
-            <Button className="uppercase" variant="ghost">
-              Export
-            </Button>
-          </ExportModal>
-        )}
+        <MenuModeToggle />
+        <div className="flex w-full gap-3 pl-4">
+          <Popover>
+            <PopoverTrigger>
+              <CustomTooltip title="Settings" Icon={<SettingsIcon className="h-5 w-5" />} />
+            </PopoverTrigger>
+            <PopoverContent className="h-auto w-auto bg-secondary">
+              <Settings />
+              <PopoverArrow className="fill-primary" />
+            </PopoverContent>
+          </Popover>
+          {!['csv', null].includes(fileType) && (
+            <ExportModal>
+              <Button className="uppercase" variant="ghost">
+                Export
+              </Button>
+            </ExportModal>
+          )}
 
-        <FrequencyAnalysisDialog />
-        <ImportDialog />
-        <ImportFile />
-        <EventProgress />
+          <FrequencyAnalysisDialog />
+          <ImportDialog />
+          <ImportFile />
+          <EventProgress />
+        </div>
+      </Menubar>
+      <div className="w-full h-[1.5px] ">
+        <div
+          className="bg-primary h-[1.5px] "
+          style={{ transform: `translateX(-${100 - (progress.current || 100)}%)` }}
+        ></div>
       </div>
-    </Menubar>
+    </>
   )
 }
