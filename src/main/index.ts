@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, Notification } from 'electron'
 import { join } from 'path'
 import { autoUpdater } from 'electron-updater'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
@@ -32,12 +32,12 @@ const createWindow = (): void => {
     titleBarOverlay: {
       color: '#2f3241',
       symbolColor: '#74b1be',
-      height: 40
+      height: 44
     },
     trafficLightPosition: { x: 10, y: 10 },
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: true,
+      sandbox: false,
       contextIsolation: true,
       nodeIntegration: true
     }
@@ -79,15 +79,21 @@ const createWindow = (): void => {
   }
 }
 
+app.on('ready', () => {
+  autoUpdater.checkForUpdatesAndNotify()
+  autoUpdater.autoDownload = true
+  autoUpdater.autoInstallOnAppQuit = true
+  autoUpdater.signals.progress((p) => {
+    BrowserWindow.getAllWindows()[0].setProgressBar(p.percent / 100, { mode: 'normal' })
+  })
+})
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
-  autoUpdater.signals.progress((p) => {
-    BrowserWindow.getAllWindows()?.[0].setProgressBar(p.percent / 100, { mode: 'normal' })
-  })
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -136,27 +142,26 @@ app.whenReady().then(() => {
   })
 
   ipcMain.handle('checkUpdates', async () => {
-    const result = await autoUpdater.checkForUpdates()
     const version = app.getVersion()
-    if (result?.updateInfo?.version === version) {
-      return undefined
+    const response = await autoUpdater.checkForUpdates()
+    if (response?.updateInfo?.version !== version) {
+      BrowserWindow.getAllWindows()[0].webContents.send('update-available', response?.updateInfo)
+    } else {
+      BrowserWindow.getAllWindows()[0].webContents.send('update-available', 'not updates available')
     }
-    return result?.updateInfo
-  })
-  ipcMain.handle('quitAndInstall', () => {
-    autoUpdater.quitAndInstall(true, true)
-  })
 
-  ipcMain.handle('downloadUpdate', async () => {
-    autoUpdater.signals.progress((p) => {
-      BrowserWindow.getAllWindows()?.[0].setProgressBar(p.percent / 100, { mode: 'normal' })
+    autoUpdater.signals.progress((info) => {
+      BrowserWindow.getAllWindows()[0].webContents.send('download-progress', info)
     })
-    const result = await autoUpdater
-      .downloadUpdate()
-      .then((r) => r)
-      .catch((e) => e.toString())
 
-    return result
+    autoUpdater.signals.updateDownloaded((info) => {
+      BrowserWindow.getAllWindows()[0].webContents.send('update-downloaded', info)
+      new Notification({
+        title: 'Update downloaded successfully',
+        body: 'Please restart the app to apply the update'
+      }).show()
+    })
+    return response?.updateInfo
   })
 
   ipcMain.handle('quit', () => {
