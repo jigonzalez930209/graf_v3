@@ -1,6 +1,6 @@
 {
   "name": "graf_v3",
-  "version": "0.3.52",
+  "version": "0.4.0",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "jigonzalez930209",
@@ -61,7 +61,7 @@
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
     "typecheck": "pnpm run typecheck:node && pnpm run typecheck:web",
     "start-vite": "electron-vite preview",
-    "dev": "electron-vite dev",
+    "dev": "electron-vite dev -w --sourcemap",
     "make": "electron-forge make",
     "compile": "cross-env MODE=production pnpm run build && electron-builder build --config electron-builder.yml --dir --config.asar=false",
     "build": "pnpm run typecheck && electron-vite build",
