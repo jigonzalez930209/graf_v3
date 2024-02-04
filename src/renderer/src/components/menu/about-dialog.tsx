@@ -18,14 +18,8 @@ import { enqueueSnackbar } from 'notistack'
 
 export function AboutDialog() {
   const {
-    graftState: { updateContent },
-    setUpdateContent,
-    setProgressEvent
+    graftState: { updateContent }
   } = React.useContext(GrafContext)
-
-  const [updateState, setUpdateState] = useState<
-    'success' | 'pending' | 'inProgress' | 'finish' | undefined
-  >(undefined)
 
   const [updateText, setUpdateText] = useState('')
 
@@ -36,69 +30,18 @@ export function AboutDialog() {
     arc: ''
   })
 
-  const handleInitialState = React.useCallback(async () => {
-    const { version, name, electronVersion, arc } = await window.context.getAppInfo()
-    setAppInfo({ version, name, electronVersion, arc })
+  React.useEffect(() => {
+    window.context.getAppInfo().then(({ version, name, electronVersion, arc }) => {
+      setAppInfo({ version, name, electronVersion, arc })
+    })
     if (updateContent?.version) {
-      setUpdateText(`New version available version ${updateContent.version}`)
-      setUpdateState('pending')
+      setUpdateText(
+        `New version available version ${updateContent.version} \n please restart the app to apply the update`
+      )
       return
     }
-    setUpdateState(undefined)
     setUpdateText('Please check for updates...')
-  }, [])
-
-  const quitAndInstall = React.useCallback(async () => {
-    setUpdateContent(null)
-    setUpdateText('You have the latest version.')
-    window.context.quitAndInstall()
-  }, [])
-
-  const checkUpdates = React.useCallback(async () => {
-    window.context.checkUpdates().then((updateInfo) => {
-      if (updateInfo) {
-        setUpdateText(`New version available version ${updateInfo?.version}`)
-        setUpdateContent(updateInfo)
-        setUpdateState('success')
-        return
-      }
-      setUpdateState(undefined)
-      setUpdateText('You have the latest version.')
-    })
-  }, [])
-
-  const downloadUpdate = React.useCallback(async () => {
-    enqueueSnackbar('Downloading update', { variant: 'info' })
-    setUpdateState('inProgress')
-    setProgressEvent({
-      type: 'progress',
-      name: 'Downloading update',
-      message: 'Please wait...',
-      timeOut: undefined
-    })
-
-    window.context
-      .downloadUpdate()
-      .then((downloadInfo) => {
-        if (!downloadInfo) return
-        setUpdateState('pending')
-        enqueueSnackbar('Update downloaded', { variant: 'success' })
-        setProgressEvent({
-          type: 'success',
-          name: 'Update downloaded',
-          message: 'Please install the update',
-          timeOut: 9000
-        })
-      })
-      .catch((err) => {
-        enqueueSnackbar(err.toString(), { variant: 'error' })
-        setUpdateState(undefined)
-      })
-  }, [])
-
-  React.useEffect(() => {
-    handleInitialState()
-  }, [handleInitialState])
+  }, [updateContent])
 
   return (
     <DialogContent className="overflow-clip pb-2 w-[50hv]">
@@ -112,14 +55,18 @@ export function AboutDialog() {
           <span className="flex gap-1 font-mono text-xs font-medium">
             Version {appInfo.version} ({appInfo.arc})
             <span className="font-sans font-medium text-gray-400">
-              (
+              <span
+                className="cursor-pointer text-blue-500 mx-3"
+                onClick={() => open('https://github.com/jigonzalez930209/graf_v3/releases')}
+              >
+                release notes {'  '}
+              </span>
               <span
                 className="cursor-pointer text-blue-500"
-                onClick={() => open('https://github.com/jigonzalez930209/graf-v3/releases')}
+                onClick={() => open('https://github.com/jigonzalez930209/graf_v3/issues')}
               >
-                release notes
+                issues
               </span>
-              )
             </span>
           </span>
         </DialogTitle>
@@ -145,47 +92,10 @@ export function AboutDialog() {
           />
           <GithubIcon
             className="h-5 w-5 cursor-pointer transition hover:text-slate-300 "
-            onClick={() => open('https://github.com/jigonzalez930209/graf-v3')}
+            onClick={() => open('https://github.com/jigonzalez930209/graf_v3')}
           />
         </div>
 
-        {(!updateState || updateState === 'finish') && (
-          <Button
-            className={buttonVariants({
-              variant: 'secondary',
-              className: 'h-8 flex flex-row gap-2'
-            })}
-            onClick={checkUpdates}
-          >
-            <UpdateIcon /> Check for Updates
-          </Button>
-        )}
-        {updateState === 'success' && (
-          <Button
-            className={buttonVariants({
-              variant: 'default',
-              className: 'h-8 flex flex-row gap-2'
-            })}
-            onClick={downloadUpdate}
-          >
-            <UpdateIcon /> Download Update
-          </Button>
-        )}
-        {(updateState === 'pending' || updateState === 'inProgress') && (
-          <Button
-            className={buttonVariants({
-              variant: updateState === 'pending' ? 'success' : 'default',
-              className: 'h-8'
-            })}
-            disabled={updateState === 'inProgress'}
-            onClick={quitAndInstall}
-          >
-            <UpdateIcon
-              className={cn(updateState === 'inProgress' && 'animate-spin duration-1000')}
-            />{' '}
-            Install Update and Restart
-          </Button>
-        )}
         <DialogPrimitive.Close
           className={buttonVariants({
             variant: 'destructive',
