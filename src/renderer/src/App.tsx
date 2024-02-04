@@ -57,7 +57,7 @@ const App = () => {
       .checkUpdates()
       .then((updateInfo) => {
         console.log('updateInfo', updateInfo)
-        if (updateInfo) {
+        if (updateInfo?.version) {
           setUpdateContent(updateInfo)
           enqueueSnackbar(`New version available version ${updateInfo.version}`, {
             variant: 'info'

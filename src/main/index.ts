@@ -161,7 +161,9 @@ app.whenReady().then(() => {
         body: 'Please restart the app to apply the update'
       }).show()
     })
-    return response?.updateInfo
+    return response?.updateInfo && response.updateInfo.version !== version
+      ? response.updateInfo
+      : undefined
   })
 
   ipcMain.handle('quit', () => {
