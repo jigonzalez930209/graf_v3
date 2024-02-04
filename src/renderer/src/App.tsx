@@ -53,39 +53,41 @@ const App = () => {
       })
       .catch(console.error)
 
-    setProgressEvent({
-      type: 'progress',
-      name: 'Checking for updates',
-      message: 'The app is downloading the latest version. Please wait...',
-      timeOut: undefined
-    })
-
     window.context
       .checkUpdates()
       .then((updateInfo) => {
-        if (!updateInfo) return
         console.log('updateInfo', updateInfo)
-        setUpdateContent(updateInfo)
-        setProgressEvent({
-          type: 'success',
-          name: `Update available version ${updateInfo.version}`,
-          message: 'Update available',
-          timeOut: 10000
-        })
-        enqueueSnackbar(`New version available version ${updateInfo.version}`, {
-          variant: 'info',
-          autoHideDuration: 4000
-        })
+        if (updateInfo) {
+          setUpdateContent(updateInfo)
+          enqueueSnackbar(`New version available version ${updateInfo.version}`, {
+            variant: 'info'
+          })
+        }
       })
-      .catch((e) => {
-        console.error(e)
-        setProgressEvent({
-          type: 'error',
-          name: 'Update error',
-          message: 'Error checking for updates',
-          timeOut: 10000
-        })
+      .catch(console.error)
+    window.context.on('update-available', (_, arg) => {
+      setUpdateContent(arg)
+    })
+
+    window.context.on('update-downloaded', (_, arg) => {
+      setProgressEvent({
+        type: 'success',
+        name: `Update downloaded version ${arg.version}`,
+        message:
+          'Update downloaded and ready to install please restart the app to apply the update',
+        timeOut: 10000
       })
+    })
+
+    window.context.on('download-progress', (_, arg) => {
+      console.log('download-progress', arg)
+      setProgressEvent({
+        type: 'progress',
+        name: 'Downloading update',
+        message: `Downloading update ${Math.round(arg.percent)}%`,
+        timeOut: undefined
+      })
+    })
   }, [])
 
   return (
