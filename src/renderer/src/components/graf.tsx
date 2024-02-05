@@ -8,36 +8,19 @@ import PlotlyChart from '@/components/plot/plot'
 
 import { GrafContext } from '../context/GraftContext'
 import { LoadingsContext } from '../context/Loading'
-import { useData } from '../hooks/useData'
-import usePlotlyOptions from '../hooks/usePlotlyOptions'
-import { IProcessFile } from '@shared/models/files'
 import { PlotParams } from 'react-plotly.js'
-import { IPlatform } from '@shared/models/graf'
+
+import { IProcessFile } from '@shared/models/files'
+
+import usePlotlyOptions from '../hooks/usePlotlyOptions'
 
 const Graf = () => {
-  const { updateData } = useData()
   const { graftState } = React.useContext(GrafContext)
   const {
-    loading: { loading },
-    setLoading
+    loading: { loading }
   } = React.useContext(LoadingsContext)
-  const [platform, setPlatform] = React.useState<IPlatform>(null)
+
   const { data, layout, config } = usePlotlyOptions()
-
-  // const readFiles = React.useCallback(async () => {
-  //   setLoading(true)
-
-  //   updateData(await readFilesUsingTauriProcess().finally(() => setLoading(false)))
-  // }, [])
-
-  const handleFileDropChange = React.useCallback(async () => {}, [loading])
-
-  React.useEffect(() => {
-    handleFileDropChange()
-
-    setPlatform('desktop')
-    setLoading(false)
-  }, [])
 
   return (
     <div>
