@@ -1,7 +1,6 @@
 import React from 'react'
 import { Loader } from 'lucide-react'
 
-import AppBar from '@/components/app-bar'
 import DragDrop from '@/components/drag-drop/drag-drop'
 import Drawer from '@/components/drawer'
 import PlotlyChart from '@/components/plot/plot'
@@ -24,7 +23,6 @@ const Graf = () => {
 
   return (
     <div>
-      <AppBar />
       {loading && <Loader />}
       <div className="flex max-h-full max-w-full">
         <Drawer />
