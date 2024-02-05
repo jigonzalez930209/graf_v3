@@ -11,65 +11,25 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion'
 
-import { Button } from '../ui/button'
 import Container from './container'
 import Item from './item'
 import List from './list'
-import RemoveSelection from './remove-selection'
-import { IProcessFile } from '@shared/models/files'
-
-type GroupedFiles = {
-  teq4: IProcessFile[]
-  teq4Z: IProcessFile[]
-  csv: IProcessFile[]
-  all: IProcessFile[]
-}
+import { GroupedFiles } from '@shared/models/files'
 
 type FileSortProps = {
   maxHeight?: string
   children?: React.ReactNode
+  groupedFiles: GroupedFiles
 }
 
 const FileSort = (props: FileSortProps) => {
   const {
-    graftState: { isFilesGrouped, files, drawerOpen },
-    setIsFilesGrouped,
-    setDrawerOpen
+    graftState: { isFilesGrouped, files }
   } = React.useContext(GrafContext)
-  const { maxHeight, children } = props
+  const { maxHeight, children, groupedFiles } = props
 
   const { changeSelectedFile } = useData()
   const { enqueueSnackbar } = useSnackbar()
-
-  const [groupedFiles, setGroupedFiles] = React.useState<GroupedFiles>({
-    teq4: [],
-    teq4Z: [],
-    csv: [],
-    all: files
-  })
-
-  const groupFiles = React.useCallback(() => {
-    if (isFilesGrouped) {
-      setGroupedFiles({
-        teq4: [],
-        teq4Z: [],
-        csv: [],
-        all: files
-      })
-    } else {
-      setGroupedFiles({
-        teq4: files.filter((f) => f.type === 'teq4'),
-        teq4Z: files.filter((f) => f.type === 'teq4z'),
-        csv: files.filter((f) => f.type === 'csv'),
-        all: []
-      })
-    }
-  }, [groupedFiles])
-
-  const handleChangeGroupedFiles = React.useCallback(() => {
-    setIsFilesGrouped(!isFilesGrouped)
-    groupFiles()
-  }, [isFilesGrouped])
 
   const handleFileSelectedChange = React.useCallback(
     (id: string) => {
@@ -86,16 +46,6 @@ const FileSort = (props: FileSortProps) => {
 
   return (
     <Container maxHeight={maxHeight} className="relative">
-      <div className="sticky top-0 z-50 flex w-full justify-between gap-4 bg-secondary px-3">
-        <Button variant="ghost" size="icon" onClick={() => handleChangeGroupedFiles()}>
-          {isFilesGrouped ? (
-            <UngroupIcon className="h-[15px] w-[15px]" />
-          ) : (
-            <GroupIcon className="h-[15px] w-[15px]" />
-          )}
-        </Button>
-        <RemoveSelection />
-      </div>
       <div className="py-2">
         {isFilesGrouped ? (
           <Accordion type="single" collapsible className="w-full px-3">
