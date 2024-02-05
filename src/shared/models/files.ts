@@ -67,4 +67,11 @@ type IFileBinary = {
   content: ArrayBuffer
 }
 
-export type { IFile, IExportData, IProcessFile, IFiles, IFileRaw, IFileBinary }
+type GroupedFiles = {
+  teq4: IProcessFile[]
+  teq4Z: IProcessFile[]
+  csv: IProcessFile[]
+  all: IProcessFile[]
+}
+
+export type { IFile, IExportData, IProcessFile, IFiles, IFileRaw, IFileBinary, GroupedFiles }
