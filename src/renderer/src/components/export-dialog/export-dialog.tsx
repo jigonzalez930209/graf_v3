@@ -44,7 +44,6 @@ const ExportDialog = ({ children }: ExportDialogProps) => {
   const [open, setOpen] = React.useState(false)
 
   const handleChange = (id: string, c: boolean) => {
-    console.log(id, c)
     if (selectedTab === 'teq4') {
       setColumnsState({
         ...columnsState,
@@ -116,7 +115,6 @@ const ExportDialog = ({ children }: ExportDialogProps) => {
 
         .catch(console.error)
     }
-    console.log(filename)
   }
 
   React.useEffect(() => {

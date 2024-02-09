@@ -71,16 +71,8 @@ const calculateColumn = ({
   totalPoints,
   totalTime
 }: calculateColumnProps) => {
-  // console.log({ key, value, type, voltameter, index, pointNumbers })
   if (type === 'teq4') {
     const time = (totalTime! / totalPoints!) * (index! + 1)
-    // console.log({
-    //   time,
-    //   V: value[0],
-    //   I: value[1],
-    //   VP: new Number(value[0]),
-    //   IP: new Number(value[1])
-    // })
     const res = {
       Time: time,
       Voltage: parseFloat(new Number(value[0]).toFixed(10)),
@@ -168,7 +160,6 @@ const exportExcelVoltametry = async ({
   sameSheet = true,
   columns
 }: exportExcelProps): Promise<ArrayBuffer> => {
-  console.log({ files, sameSheet, columns })
   if (sameSheet) {
     const processFiles = files.reduce((acc, f, fi) => {
       const data = f.content.map((c, i) =>
@@ -189,7 +180,6 @@ const exportExcelVoltametry = async ({
       )
       return acc.length ? acc.map((a, i) => _.merge(a, data[i])) : data
     }, [] as unknown[])
-    console.log({ processFiles })
     const voltametry = XLSX.utils.json_to_sheet(processFiles)
 
     const wb: WebBook = {

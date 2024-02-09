@@ -50,7 +50,6 @@ export function Menu() {
     window.context.getAppName().then((name) => setName(name))
     updateStatus
     window.context.on('download-progress', (_, arg) => {
-      console.log('download-progress', arg)
       progress.current = arg.percent
     })
   }, [])
