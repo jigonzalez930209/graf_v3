@@ -1,7 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
 import { useTheme } from 'next-themes'
-import { useScreen } from 'usehooks-ts'
 
 import { defaultTheme } from '@/utils'
 

@@ -4,7 +4,6 @@ import {
   Colors,
   ExcelTableData,
   Template,
-  Variables,
   ExcelTableSelected
 } from '@/utils/import-dialog-interfaces'
 import { EnqueueSnackbar } from 'notistack'

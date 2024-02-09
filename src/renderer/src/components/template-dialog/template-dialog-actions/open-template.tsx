@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { ExcelTableData, ExcelTableSelected, Template } from '@/utils/import-dialog-interfaces'
-// import { openImportTemplate } from '@/utils/tauri'
 import { FolderOpenIcon } from 'lucide-react'
 import { enqueueSnackbar } from 'notistack'
 

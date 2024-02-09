@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { GrafContext } from '@renderer/context/GraftContext'
-import { ShieldCloseIcon, ShieldEllipsisIcon, ShieldCheckIcon, RefreshCcw } from 'lucide-react'
+import { ShieldCloseIcon, ShieldCheckIcon, RefreshCcw } from 'lucide-react'
 import CustomTooltip from '../ui/tooltip'
 
 const icons = {

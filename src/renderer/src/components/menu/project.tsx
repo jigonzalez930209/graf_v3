@@ -11,7 +11,6 @@ import {
   MenubarTrigger
 } from '../ui/menubar'
 import { useToast } from '../ui/use-toast'
-import { add } from 'lodash'
 import { readGrafFile, readNativeFiles, stringifyToSave } from '@renderer/utils/connectors'
 import { IGraftState } from '@shared/models/graf'
 import { enqueueSnackbar } from 'notistack'

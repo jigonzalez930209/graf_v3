@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
-import { UpdateIcon } from '@radix-ui/react-icons'
 import { GithubIcon, HomeIcon } from 'lucide-react'
 
 import icon from '@/assets/graph-icon.png'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import {
   DialogContent,
   DialogDescription,
@@ -14,7 +13,6 @@ import {
 } from '@/components/ui/dialog'
 import { GrafContext } from '@renderer/context/GraftContext'
 import { cn } from '@renderer/utils'
-import { enqueueSnackbar } from 'notistack'
 
 export function AboutDialog() {
   const {

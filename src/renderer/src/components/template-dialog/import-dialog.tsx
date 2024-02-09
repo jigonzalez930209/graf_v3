@@ -4,11 +4,9 @@ import useImportData from '@/hooks/useImportData'
 import { IProcessFile } from '@shared/models/files'
 import { HandleSelectColumns, handleImport } from '@/utils/dialog-table-utils'
 import {
-  Colors,
   CurrentSelected,
   ExcelTableData,
-  ExcelTableSelected,
-  Variables
+  ExcelTableSelected
 } from '@/utils/import-dialog-interfaces'
 import _ from 'lodash'
 import { LayoutTemplate } from 'lucide-react'
