@@ -1,10 +1,16 @@
-import * as FileSaver from 'file-saver'
-import _, { set } from 'lodash'
+import _ from 'lodash'
 import XLSX from 'xlsx'
 
-import { COLORS } from '@shared/constants'
-import { IProcessFile } from '@shared/models/files'
+import { IProcessFile, VoltameterParameters } from '@shared/models/files'
 import { ConcInputValue, FrequencyValues } from '@shared/models/graf'
+
+const excelFileType =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8'
+
+type WebBook = {
+  Sheets: { [key: string]: XLSX.WorkSheet }
+  SheetNames: string[]
+}
 
 const exportExcelFrequencyAnalysis = async ({
   uniqueFrequencyCalc,
@@ -13,9 +19,6 @@ const exportExcelFrequencyAnalysis = async ({
   uniqueFrequencyCalc: FrequencyValues[]
   concInputValues: ConcInputValue[]
 }) => {
-  const fileType =
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8'
-  const fileExtension = '.xlsx'
   const frequency = XLSX.utils.json_to_sheet(
     uniqueFrequencyCalc.map((g, i) => ({
       frequencyLog: g[i].frequency,
@@ -47,16 +50,188 @@ const exportExcelFrequencyAnalysis = async ({
     SheetNames: ['frequency', 'conc']
   }
   const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
-  const data = new Blob([excelBuffer], { type: fileType })
+  const data = new Blob([excelBuffer], { type: excelFileType })
   return data.arrayBuffer().then((buffer) => buffer)
-  // FileSaver.saveAs(data, fileName + fileExtension)
 }
 
-const exportExcelImpedance = () => {
-  throw new Error('Not implemented')
+type calculateColumnProps = {
+  key: string
+  value: string[]
+  type: 'teq4' | 'teq4z'
+  index?: number
+  totalPoints?: number
+  totalTime?: number
 }
-const exportExcelVoltametry = () => {
-  throw new Error('Not Voltametry')
+
+const calculateColumn = ({
+  key,
+  value,
+  type,
+  index,
+  totalPoints,
+  totalTime
+}: calculateColumnProps) => {
+  // console.log({ key, value, type, voltameter, index, pointNumbers })
+  if (type === 'teq4') {
+    const time = (totalTime! / totalPoints!) * (index! + 1)
+    // console.log({
+    //   time,
+    //   V: value[0],
+    //   I: value[1],
+    //   VP: new Number(value[0]),
+    //   IP: new Number(value[1])
+    // })
+    const res = {
+      Time: time,
+      Voltage: parseFloat(new Number(value[0]).toFixed(10)),
+      Current: parseFloat(new Number(value[1]).toFixed(10))
+    }
+    return res[key]
+  }
+  if (type === 'teq4z') {
+    const calculate = {
+      Time: parseFloat(value[0]),
+      Frequency: parseFloat(value[1]),
+      Module: parseFloat(value[2]),
+      Face: parseFloat(value[3]),
+      ZR: parseFloat(value[2]) * Math.cos((parseFloat(value[3]) * Math.PI) / 180),
+      ZI: -parseFloat(value[2]) * Math.sin((parseFloat(value[3]) * Math.PI) / 180)
+    }
+
+    return calculate[key]
+  }
+}
+
+type exportExcelProps = {
+  files: IProcessFile[]
+  sameSheet: boolean
+  columns: string[]
+}
+const exportExcelImpedance = async ({
+  files,
+  sameSheet = true,
+  columns
+}: exportExcelProps): Promise<ArrayBuffer> => {
+  if (sameSheet) {
+    const processFiles = files.reduce((acc, f, fi) => {
+      const data = f.content.map((c) =>
+        columns.reduce(
+          (ac, curr) => ({
+            ...ac,
+            [`${curr} (${fi + 1})`]: calculateColumn({ key: curr, value: c, type: 'teq4z' })
+          }),
+          { [`${f.name} (${fi + 1})`]: ' ' }
+        )
+      )
+      return acc.length ? acc.map((a, i) => _.merge(a, data[i])) : data
+    }, [] as unknown[])
+
+    const impedance = XLSX.utils.json_to_sheet(processFiles)
+
+    const wb: WebBook = {
+      Sheets: { impedance },
+      SheetNames: ['impedance']
+    }
+
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+    const data = new Blob([excelBuffer], { type: excelFileType })
+    return await data.arrayBuffer()
+  }
+  const wb: WebBook = {
+    Sheets: {},
+    SheetNames: []
+  }
+  files.forEach((f) => {
+    const impedance = XLSX.utils.json_to_sheet(
+      f.content.map((d) => {
+        const data = columns.reduce(
+          (ac, curr) => ({
+            ...ac,
+            [`${curr}`]: calculateColumn({ key: curr, value: d, type: 'teq4z' })
+          }),
+          {}
+        )
+
+        return data
+      })
+    )
+    wb.Sheets[f.name] = impedance
+    wb.SheetNames.push(f.name)
+  })
+  const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+  const data = new Blob([excelBuffer], { type: excelFileType })
+  return await data.arrayBuffer()
+}
+
+const exportExcelVoltametry = async ({
+  files,
+  sameSheet = true,
+  columns
+}: exportExcelProps): Promise<ArrayBuffer> => {
+  console.log({ files, sameSheet, columns })
+  if (sameSheet) {
+    const processFiles = files.reduce((acc, f, fi) => {
+      const data = f.content.map((c, i) =>
+        columns.reduce(
+          (ac, curr) => ({
+            ...ac,
+            [`${curr} (${fi + 1})`]: calculateColumn({
+              key: curr,
+              value: c,
+              type: 'teq4',
+              index: i,
+              totalPoints: f.content.length,
+              totalTime: f.voltammeter?.totalTime
+            })
+          }),
+          { [`${f.name} (${fi + 1})`]: ' ' }
+        )
+      )
+      return acc.length ? acc.map((a, i) => _.merge(a, data[i])) : data
+    }, [] as unknown[])
+    console.log({ processFiles })
+    const voltametry = XLSX.utils.json_to_sheet(processFiles)
+
+    const wb: WebBook = {
+      Sheets: { voltametry },
+      SheetNames: ['voltametry']
+    }
+
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+    const data = new Blob([excelBuffer], { type: excelFileType })
+    return await data.arrayBuffer()
+  }
+  const wb: WebBook = {
+    Sheets: {},
+    SheetNames: []
+  }
+  files.forEach((f) => {
+    const voltametry = XLSX.utils.json_to_sheet(
+      f.content.map((d, i) => {
+        const data = columns.reduce(
+          (ac, curr) => ({
+            ...ac,
+            [`${curr}`]: calculateColumn({
+              key: curr,
+              value: d,
+              type: 'teq4',
+              index: i,
+              totalPoints: f.content.length,
+              totalTime: f.voltammeter?.totalTime
+            })
+          }),
+          {}
+        )
+
+        return data
+      })
+    )
+    wb.Sheets[f.name] = voltametry
+    wb.SheetNames.push(f.name)
+  })
+  const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+  const data = new Blob([excelBuffer], { type: excelFileType })
+  return await data.arrayBuffer()
 }
 
 const homogenizeMatrix = (matrix, defaultValue) => {
@@ -106,6 +281,7 @@ const stringToArrayBuffer = (text: string, encoding = 'UTF-8'): Promise<ArrayBuf
     reader.readAsArrayBuffer(blob)
   })
 }
+
 export {
   exportExcelFrequencyAnalysis as exportExcelFrequency,
   exportExcelImpedance,
