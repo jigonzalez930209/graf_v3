@@ -24,8 +24,6 @@ const App = () => {
           return window.context
             .importFilesFromLoader()
             .then((files) => {
-              console.log('files', files)
-
               if (files === undefined)
                 return enqueueSnackbar('Something went wrong read the on load the app', {
                   variant: 'error'
@@ -56,7 +54,6 @@ const App = () => {
     window.context
       .checkUpdates()
       .then((updateInfo) => {
-        console.log('updateInfo', updateInfo)
         if (updateInfo?.version) {
           setUpdateContent(updateInfo)
           enqueueSnackbar(`New version available version ${updateInfo.version}`, {
@@ -80,7 +77,6 @@ const App = () => {
     })
 
     window.context.on('download-progress', (_, arg) => {
-      console.log('download-progress', arg)
       setProgressEvent({
         type: 'progress',
         name: 'Downloading update',

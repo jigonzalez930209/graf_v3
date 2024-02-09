@@ -20,6 +20,7 @@ type ItemProps = React.PropsWithChildren & {
   setFile: (id: string) => void
 }
 
+// TODO: Eliminate files and pass as reference to avoid files.find() function
 const Item = React.forwardRef<HTMLLIElement, ItemProps>((props, ref) => {
   const { className, children, file, setFile, ...rest } = props
   const { theme } = useTheme()

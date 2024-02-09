@@ -41,9 +41,8 @@ try {
       const notification = await ipcRenderer.invoke('saveTemplates', templates)
       return notification
     },
-    saveExcelFile: async (fileName: string, content: Blob) => {
-      const arrayBuffer = await content.arrayBuffer()
-      const notification = await ipcRenderer.invoke('saveExcelFile', fileName, arrayBuffer)
+    saveExcelFile: async (fileName: string, content: ArrayBuffer) => {
+      const notification = await ipcRenderer.invoke('saveExcelFile', fileName, content)
       return notification
     },
 

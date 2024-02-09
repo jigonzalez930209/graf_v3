@@ -4,7 +4,7 @@ import { GrafContext } from '@/context/GraftContext'
 import { Label } from '../ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Slider } from '../ui/slider'
-import ColorSelectPalette from '../app-bar/color-select'
+import ColorSelectPalette from './color-select'
 import { IGrafType, IGraftImpedanceType } from '@shared/models/graf'
 import { IMPEDANCE_TYPE } from '@shared/constants'
 
