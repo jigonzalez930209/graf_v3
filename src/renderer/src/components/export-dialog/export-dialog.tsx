@@ -1,14 +1,16 @@
 import React from 'react'
 import { GrafContext } from '@/context/GraftContext'
-import { COLUMNS_IMPEDANCE, COLUMNS_VOLTAMETER } from '@/utils'
+import { COLUMNS_IMPEDANCE, COLUMNS_VOLTAMETER, cn } from '@/utils'
 
-import FileSort from '../file-sort'
 import { Button } from '../ui/button'
-import { Checkbox } from '../ui/checkbox'
 import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from '../ui/dialog'
 import { Input } from '../ui/input'
-import { Skeleton } from '../ui/skeleton'
-import ExcelFileExport from './excel-file-export'
+import { IProcessFile } from '@shared/models/files'
+import { exportExcelImpedance, exportExcelVoltametry } from '@renderer/utils/common'
+import { enqueueSnackbar } from 'notistack'
+import { Switch } from '../ui/switch'
+import SelectedItem from './items'
+import FilesTabs, { FilesTabsProps } from './files-by-tabs'
 
 type ExportDialogProps = {
   children?: React.ReactNode
@@ -16,109 +18,192 @@ type ExportDialogProps = {
 
 const ExportDialog = ({ children }: ExportDialogProps) => {
   const {
-    graftState: { fileType }
+    graftState: { files: filesState, fileType }
   } = React.useContext(GrafContext)
-  const [state, setState] = React.useState(
-    fileType === 'teq4z'
-      ? COLUMNS_IMPEDANCE.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
-      : COLUMNS_VOLTAMETER.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+
+  const [selectedTab, setSelectedTab] = React.useState<'teq4' | 'teq4z'>(
+    (fileType as 'teq4' | 'teq4z') || 'teq4'
   )
-  const [exportData, setExportData] = React.useState<JSX.Element>()
-  const [isSameSheet] = React.useState(true)
-  const [filename, setFilename] = React.useState(Date.now().toString())
+
+  const [columnsState, setColumnsState] = React.useState({
+    teq4z: COLUMNS_IMPEDANCE.reduce((acc, curr) => ({ ...acc, [curr]: true }), {}),
+    teq4: COLUMNS_VOLTAMETER.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+  })
+
+  const [filesByTabs, setFilesByTabs] = React.useState<{
+    teq4: IProcessFile[]
+    teq4z: IProcessFile[]
+  }>({
+    teq4: filesState.filter((file) => file.type === 'teq4'),
+    teq4z: filesState.filter((file) => file.type === 'teq4z')
+  })
+
+  const [isSameSheet, setIsSameSheet] = React.useState(true)
+  const [filename, setFilename] = React.useState('')
 
   const [open, setOpen] = React.useState(false)
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      [event.target.name]: event.target.checked
-    })
+  const handleChange = (id: string, c: boolean) => {
+    console.log(id, c)
+    if (selectedTab === 'teq4') {
+      setColumnsState({
+        ...columnsState,
+        teq4: {
+          ...columnsState.teq4,
+          [id]: c
+        }
+      })
+    } else {
+      setColumnsState({
+        ...columnsState,
+        teq4z: {
+          ...columnsState.teq4z,
+          [id]: c
+        }
+      })
+    }
   }
 
-  const error = !Object.values(state).find((c) => c === true) || filename.length < 3
+  const handleSelectFiles = (id: string, selected: boolean) => {
+    if (selectedTab === 'teq4') {
+      setFilesByTabs({
+        ...filesByTabs,
+        teq4: filesByTabs.teq4.map((f) => (f.id === id ? { ...f, selected } : f))
+      })
+    } else {
+      setFilesByTabs({
+        ...filesByTabs,
+        teq4z: filesByTabs.teq4z.map((f) => (f.id === id ? { ...f, selected } : f))
+      })
+    }
+  }
+
+  const error =
+    (columnsState?.[selectedTab] &&
+      !Object.values(columnsState?.[selectedTab])?.find((c) => c === true)) ||
+    filename.length < 3 ||
+    !filesByTabs[selectedTab].find((f) => f.selected)
+
+  const handleExport = async () => {
+    if (selectedTab === 'teq4') {
+      const dataBlob = await exportExcelVoltametry({
+        files: filesByTabs.teq4.filter((c) => c.selected),
+        sameSheet: isSameSheet, // Add the missing 'sameSheet' property
+        columns: Object.entries(columnsState.teq4)
+          .filter(([_, v]) => v)
+          .map(([k, _]) => k)
+      })
+      window.context
+        .saveExcelFile(filename, dataBlob)
+        .then((notification) => {
+          enqueueSnackbar(notification.content, { variant: notification.type })
+        })
+
+        .catch(console.error)
+    } else {
+      const dataBlob = await exportExcelImpedance({
+        files: filesByTabs.teq4z.filter((c) => c.selected),
+        sameSheet: isSameSheet, // Add the missing 'sameSheet' property
+        columns: Object.entries(columnsState.teq4z)
+          .filter(([_, v]) => v)
+          .map(([k, _]) => k)
+      })
+      window.context
+        .saveExcelFile(filename, dataBlob)
+        .then((notification) => {
+          enqueueSnackbar(notification.content, { variant: notification.type })
+        })
+
+        .catch(console.error)
+    }
+    console.log(filename)
+  }
 
   React.useEffect(() => {
-    setExportData(undefined)
-    const timer = setTimeout(() => {
-      setExportData(
-        <div>
-          <ExcelFileExport
-            filename={filename}
-            isSameSheet={isSameSheet}
-            columns={Object.entries(state)
-              .filter(([, v], _) => v === true)
-              .map(([k, _]) => k)}
-          />
-        </div>
-      )
-    }, 10)
-
-    return () => {
-      clearTimeout(timer)
-    }
-  }, [filename, state, isSameSheet])
+    setFilesByTabs({
+      teq4: filesState.filter((file) => file.type === 'teq4'),
+      teq4z: filesState.filter((file) => file.type === 'teq4z')
+    })
+    setSelectedTab(fileType === 'teq4' ? 'teq4' : 'teq4z')
+  }, [open])
 
   return (
     <Dialog open={open} onOpenChange={(o) => setOpen(o)}>
       <DialogTrigger>{children}</DialogTrigger>
-      <DialogContent>
-        <DialogTitle> Select a columns to export </DialogTitle>
+      <DialogContent className="h-[80%]">
+        <DialogTitle showCloseButton={false}>Select a columns to export</DialogTitle>
         {open && (
-          <div className="flex flex-row">
-            <div className="flex flex-col gap-4">
+          <div className="flex flex-row gap-4 w-[100%] ">
+            <div className="flex flex-col gap-3 mt-2">
               <label>Select columns to save</label>
               <div className="flex w-full flex-col gap-4">
-                {fileType === 'teq4z' &&
-                  COLUMNS_IMPEDANCE.map((column) => (
-                    <div key={column} className="flex w-full items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={state[column]}
-                        onChange={handleChange}
+                {selectedTab === 'teq4z' && (
+                  <ul className="flex flex-col gap-2 my-1 py-1">
+                    {COLUMNS_IMPEDANCE.map((column) => (
+                      <SelectedItem
+                        key={column}
+                        name={column}
                         id={column}
+                        idPrefix="column-"
+                        isSelected={columnsState[selectedTab][column]}
+                        setChecked={handleChange}
                       />
-                      <label className="ml-5" key={column}>
-                        {column}
-                      </label>
-                    </div>
-                  ))}
-                {fileType === 'teq4' &&
-                  COLUMNS_VOLTAMETER.map((column) => (
-                    <div key={column} className="flex w-full items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={state[column]}
-                        onChange={handleChange}
+                    ))}
+                  </ul>
+                )}
+                {selectedTab === 'teq4' && (
+                  <ul className="flex flex-col gap-2 my-1 py-1">
+                    {COLUMNS_VOLTAMETER.map((column) => (
+                      <SelectedItem
+                        key={column}
+                        name={column}
                         id={column}
+                        idPrefix="column-"
+                        isSelected={columnsState[selectedTab][column]}
+                        setChecked={handleChange}
                       />
-                      <label className="ml-5" key={column}>
-                        {column}
-                      </label>
-                    </div>
-                  ))}
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
             <div>
-              <FileSort maxHeight="h-[35vh]" />
+              <FilesTabs
+                onChangeTabs={(e) => setSelectedTab(e as FilesTabsProps['selectedTab'])}
+                selectedTab={selectedTab}
+                filesByTabs={filesByTabs}
+                onChangeSelectedFiles={handleSelectFiles}
+              />
             </div>
           </div>
         )}
-        <div className="m-3">
-          <label htmlFor="filename">File Name</label>
-          <Input
-            className="w-full rounded-md border border-gray-300 p-2"
-            value={filename}
-            onChange={(e) => setFilename(e.target.value)}
-            name="filename"
-          />
+        <div className="flex gap-3 bg-background">
+          <div>
+            <div>File Name</div>
+            <Input
+              className="max-w-max rounded-md mt-2 border border-gray-300 p-2"
+              value={filename}
+              placeholder="Please enter a file name"
+              onChange={(e) => setFilename(e.target.value)}
+              name="filename"
+            />
+          </div>
+          <div className=" ">
+            <div>Same Sheet</div>
+            <Switch
+              id="same-sheet"
+              className="mt-2"
+              checked={isSameSheet}
+              onCheckedChange={() => setIsSameSheet((prev) => !prev)}
+            />
+          </div>
         </div>
         <DialogFooter>
           <Button variant="destructive" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button variant="default">
-            {!error ? exportData : <Skeleton className="h-4 w-[100px]" />}
+          <Button variant={error ? 'outline' : 'success'} disabled={!error} onClick={handleExport}>
+            {!error ? 'Save File' : 'Error'}
           </Button>
         </DialogFooter>
       </DialogContent>
