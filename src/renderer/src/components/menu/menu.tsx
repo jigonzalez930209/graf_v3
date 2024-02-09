@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { SettingsIcon } from 'lucide-react'
+import { ImportIcon, SaveIcon, SettingsIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -31,7 +31,7 @@ import EventProgress from './event-progress'
 export function Menu() {
   const [name, setName] = React.useState('')
   const {
-    graftState: { fileType }
+    graftState: { fileType, files }
   } = React.useContext(GrafContext)
 
   const progress = React.useRef(0)
@@ -89,17 +89,15 @@ export function Menu() {
               <PopoverArrow className="fill-primary" />
             </PopoverContent>
           </Popover>
-          {!['csv', null].includes(fileType) && (
-            <ExportModal>
-              <Button className="uppercase" variant="ghost">
-                Export
-              </Button>
-            </ExportModal>
-          )}
 
           <FrequencyAnalysisDialog />
           <ImportDialog />
           <ImportFile />
+          {Boolean(files.find((f) => f.type === 'teq4' || f.type === 'teq4z')) && files.length && (
+            <ExportModal>
+              <CustomTooltip title="Export to Excel" Icon={<SaveIcon className="h-5 w-5" />} />
+            </ExportModal>
+          )}
           <EventProgress />
         </div>
       </Menubar>
