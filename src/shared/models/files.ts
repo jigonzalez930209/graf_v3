@@ -32,19 +32,8 @@ type IProcessFile = {
   invariableContent?: string[][]
   selectedInvariableContentIndex?: number
   color: string
-  impedance?: {
-    V: number
-    signalAmplitude: number
-    sFrequency: number
-    eFrequency: number
-    totalPoints: number
-  }
-  voltammeter?: {
-    samplesSec: number
-    range: number
-    totalTime: number
-    cicles: number
-  }
+  impedance?: ImpedanceParameters
+  voltammeter?: VoltameterParameters
   csv?: {
     columns: string[]
   }
@@ -74,4 +63,29 @@ type GroupedFiles = {
   all: IProcessFile[]
 }
 
-export type { IFile, IExportData, IProcessFile, IFiles, IFileRaw, IFileBinary, GroupedFiles }
+type ImpedanceParameters = {
+  V: number
+  signalAmplitude: number
+  sFrequency: number
+  eFrequency: number
+  totalPoints: number
+}
+
+type VoltameterParameters = {
+  samplesSec: number
+  range: number
+  totalTime: number
+  cicles: number
+}
+
+export type {
+  IFile,
+  IExportData,
+  IProcessFile,
+  IFiles,
+  IFileRaw,
+  IFileBinary,
+  GroupedFiles,
+  ImpedanceParameters,
+  VoltameterParameters
+}
