@@ -4,7 +4,7 @@ import { IFileRaw, IProcessFile } from '@shared/models/files'
 import { generateRandomNumber } from './utils'
 import { generateRandomId } from './common'
 import _ from 'lodash'
-import { IGraftState, INotification } from '@shared/models/graf'
+import { IGraftState } from '@shared/models/graf'
 import { ITemplateFile } from '@shared/models/template'
 
 export const readImpedanceFile = (fileRaw: IFileRaw): IProcessFile | undefined => {
