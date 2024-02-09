@@ -200,7 +200,7 @@ const ExportDialog = ({ children }: ExportDialogProps) => {
           <Button variant="destructive" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button variant={error ? 'outline' : 'success'} disabled={!error} onClick={handleExport}>
+          <Button variant={error ? 'outline' : 'success'} disabled={error} onClick={handleExport}>
             {!error ? 'Save File' : 'Error'}
           </Button>
         </DialogFooter>
