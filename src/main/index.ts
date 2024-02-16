@@ -3,7 +3,13 @@ import { join } from 'path'
 import { autoUpdater } from 'electron-updater'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/graph-icon.png?asset'
-import { ReadFilesFromPath, SaveExcelFile, SaveProject, SaveTemplate } from '@shared/types'
+import {
+  GetProject,
+  ReadFilesFromPath,
+  SaveExcelFile,
+  SaveProject,
+  SaveTemplate
+} from '@shared/types'
 import { getFiles, getGrafState, getTemplates, saveProject } from './lib'
 import { saveTemplate } from './lib/template'
 import {
@@ -29,11 +35,7 @@ const createWindow = (): void => {
       : { icon: join(__dirname, '../../resources/graph-icon.png') }),
     visualEffectState: 'active',
     titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#2f3241',
-      symbolColor: '#74b1be',
-      height: 44
-    },
+    titleBarOverlay: false,
     trafficLightPosition: { x: 10, y: 10 },
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -104,7 +106,7 @@ app.whenReady().then(() => {
 
   // Get files from current path in main process.
   ipcMain.handle('getFiles', () => getFiles())
-  ipcMain.handle('getGrafState', () => getGrafState())
+  ipcMain.handle('getGrafState', (_, ...args: Parameters<GetProject>) => getGrafState(...args))
   ipcMain.handle('getTemplates', () => getTemplates())
   ipcMain.handle('getBinaryFiles', () => getBinaryFiles())
 
@@ -168,6 +170,21 @@ app.whenReady().then(() => {
 
   ipcMain.handle('quit', () => {
     app.quit()
+  })
+
+  ipcMain.handle('maximize', () => {
+    const window = BrowserWindow.getFocusedWindow()
+    if (window) {
+      window.isMaximized() ? window.unmaximize() : window.maximize()
+    }
+    return window?.isMaximized()
+  })
+
+  ipcMain.handle('minimize', () => {
+    const window = BrowserWindow.getFocusedWindow()
+    if (window) {
+      window.minimize()
+    }
   })
 
   createWindow()

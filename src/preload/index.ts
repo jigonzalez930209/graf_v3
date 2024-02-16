@@ -20,8 +20,8 @@ try {
       const files = await ipcRenderer.invoke('getFiles')
       return files
     },
-    getGrafState: async () => {
-      const grafState = await ipcRenderer.invoke('getGrafState')
+    getGrafState: async (isSilent = false) => {
+      const grafState = await ipcRenderer.invoke('getGrafState', isSilent)
       return grafState
     },
     getTemplates: async () => {
@@ -33,8 +33,8 @@ try {
       return binaryFiles
     },
 
-    saveProject: async (state: string) => {
-      const notification = await ipcRenderer.invoke('saveGrafState', state)
+    saveProject: async (state: string, isSilent = false) => {
+      const notification = await ipcRenderer.invoke('saveGrafState', state, isSilent)
       return notification
     },
     saveTemplate: async (templates: string) => {
@@ -81,6 +81,12 @@ try {
     },
     quit: () => {
       ipcRenderer.invoke('quit')
+    },
+    maximize: async () => {
+      return await ipcRenderer.invoke('maximize')
+    },
+    minimize: () => {
+      ipcRenderer.invoke('minimize')
     }
   })
 } catch (e) {

@@ -47,7 +47,13 @@ const App = () => {
               })
             )
         }
-        return
+        return window.context
+          .getGrafState(true)
+          .then((state) => {
+            if (state.content === '') return
+            setGraftState(JSON.parse(state.content))
+          })
+          .catch(console.error)
       })
       .catch(console.error)
 
