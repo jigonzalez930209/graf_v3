@@ -5,7 +5,22 @@ import { readFile, writeFileSync } from 'fs-extra'
 import { fileType } from './utils'
 import { IFileRaw } from '@shared/models/files'
 
-export const saveProject = async (project: string): Promise<INotification> => {
+export const saveProject = async (project: string, isSilent = false): Promise<INotification> => {
+  if (isSilent) {
+    if (project) {
+      await writeFileSync('graf-state.graft', project, { encoding })
+      return {
+        type: 'success',
+        content: 'Project saved',
+        title: 'Success'
+      }
+    }
+    return {
+      type: 'error',
+      content: 'not project',
+      title: 'Warming'
+    }
+  }
   const result = await dialog.showSaveDialog(BrowserWindow.getAllWindows()[0], {
     properties: ['createDirectory'],
     filters: [
@@ -39,7 +54,23 @@ export const saveProject = async (project: string): Promise<INotification> => {
   }
 }
 
-export const getGrafState = async (): Promise<IFileRaw | undefined> => {
+export const getGrafState = async (isSilent = false): Promise<IFileRaw | undefined> => {
+  if (isSilent) {
+    try {
+      const grafState = await readFile('graf-state.graft', { encoding })
+      return {
+        name: 'graf-state.graft',
+        type: 'graft',
+        content: grafState
+      }
+    } catch {
+      return {
+        name: 'lol',
+        type: 'graft',
+        content: ''
+      }
+    }
+  }
   const result = await dialog.showOpenDialog(BrowserWindow.getAllWindows()[0], {
     properties: ['openFile'],
     filters: [
