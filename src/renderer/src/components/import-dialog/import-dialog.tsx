@@ -67,11 +67,11 @@ const ImportDialog = () => {
       <DialogTrigger onClick={() => setOpen((prev) => !prev)}>
         <CustomTooltip title="Import files" Icon={<LucideImport className="h-5 w-5" />} />
       </DialogTrigger>
-      <DialogContent className="flex h-[60%] max-w-[75%] flex-col gap-0 overflow-y-auto overflow-x-hidden">
-        <DialogTitle className="sticky top-0 flex items-center gap-10 bg-secondary">
+      <DialogContent className="flex h-[60%] p-6 max-w-[75%] flex-col gap-0 overflow-y-auto overflow-x-hidden">
+        <DialogTitle className="sticky top-0 p-1 flex gap-10" showCloseButton={false}>
           <h2>Import Dialog</h2>
         </DialogTitle>
-        <div className="mt-4 grid h-full grid-cols-4 gap-6">
+        <div className="mt-4 grid h-full grid-cols-4">
           <ImportTemplate
             setSelectedTemplate={setSelectedTemplate}
             selectedTemplate={selectedTemplate}
@@ -86,7 +86,7 @@ const ImportDialog = () => {
             disabled={templates?.length < 1}
           />
           <div className="col-span-2 flex flex-col">
-            <div className="w-full rounded-md bg-secondary px-3 font-bold">
+            <div className="w-full rounded-md px-3 font-bold">
               File Content: {selectedFile?.name}
             </div>
             <div>
