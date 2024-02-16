@@ -39,11 +39,9 @@ const PlotContainer = ({ className }: PlotContainerProps) => {
 
   return (
     <div className={cn(className, 'h-full w-[100%] overflow-auto overflow-x-hidden')}>
-      <div className="flex">
+      <div className="grid grid-cols-1 lg:grid-cols-2">
         <PlotItem title="Module" dataToGraf={grafDataBayPlots?.module} />
         <PlotItem title="Phase" dataToGraf={grafDataBayPlots?.phase} />
-      </div>
-      <div className="flex">
         <PlotItem title="ZI" dataToGraf={grafDataBayPlots?.zi} />
         <PlotItem title="ZR" dataToGraf={grafDataBayPlots?.zr} />
       </div>
