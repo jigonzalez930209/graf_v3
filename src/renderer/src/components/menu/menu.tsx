@@ -27,11 +27,12 @@ import CustomTooltip from '../ui/tooltip'
 import { MenuModeToggle } from './menu-mode-toggle'
 import { ProjectMenu } from './project'
 import EventProgress from './event-progress'
+import WindowControls from './control-buttons'
 
 export function Menu() {
   const [name, setName] = React.useState('')
   const {
-    graftState: { fileType, files }
+    graftState: { files }
   } = React.useContext(GrafContext)
 
   const progress = React.useRef(0)
@@ -99,6 +100,7 @@ export function Menu() {
           )}
           <EventProgress />
         </div>
+        <WindowControls />
       </Menubar>
       <div className="w-full h-[1.5px] ">
         <div
