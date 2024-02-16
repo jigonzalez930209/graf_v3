@@ -51,7 +51,7 @@ const Plot = (props: PlotProps) => {
         layout={{
           ...layout,
           autosize: true,
-          width: screenParameters && screenParameters?.width * 0.5,
+          width: screenParameters && screenParameters?.width * 0.46,
           height: screenParameters && screenParameters?.height * 0.5,
           margin: {
             // autoexpand: true,
