@@ -56,6 +56,8 @@ declare global {
       downloadUpdate: () => Promise<string[]>
 
       quit: () => void
+      maximize: () => boolean
+      minimize: () => void
     }
   }
 }
