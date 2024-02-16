@@ -18,7 +18,7 @@ const FileListSelector = <T,>({
 }: FileListSelectorProps<T>) => {
   return (
     <div className="mb-3 flex h-[34vh] w-full select-none flex-col space-y-2 overflow-y-auto px-1 pb-2 ">
-      <div className="sticky top-0 rounded-md bg-secondary text-center font-bold">
+      <div className="sticky top-0 rounded-md font-bold">
         {' '}
         {items?.length < 1 ? `Not ${title}` : title}
       </div>

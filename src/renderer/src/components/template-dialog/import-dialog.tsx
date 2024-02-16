@@ -85,7 +85,7 @@ const ImportDialog = () => {
           Icon={<LayoutTemplate className="h-5 w-5" />}
         />
       </DialogTrigger>
-      <DialogContent className="absolute flex h-[95%] max-w-[95%] flex-col gap-0 overflow-y-auto overflow-x-hidden">
+      <DialogContent className="absolute flex h-[91%] max-w-[95%] flex-col gap-0 overflow-y-auto overflow-x-hidden mt-6">
         <DialogTitle className="flex items-center gap-10">
           Import Data From Text File
           <ImportFile
