@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react'
+import mdx from '@mdx-js/rollup'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import { resolve } from 'path'
 
@@ -30,6 +31,11 @@ export default defineConfig({
         '@/mocks': resolve('src/renderer/src/mocks')
       }
     },
-    plugins: [react()]
+    plugins: [
+      react(),
+      mdx({
+        providerImportSource: '@mdx-js/react'
+      })
+    ]
   }
 })
