@@ -4,7 +4,7 @@ const { blackA, mauve, violet, indigo, purple } = require('@radix-ui/colors')
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ['class'],
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     container: {
       center: true,
@@ -142,5 +142,9 @@ module.exports = {
       }
     }
   },
-  plugins: [require('tailwindcss-animate'), require('tailwind-scrollbar')({ nocompatible: true })]
+  plugins: [
+    require('tailwindcss-animate'),
+    require('tailwind-scrollbar')({ nocompatible: true }),
+    require('@tailwindcss/typography')
+  ]
 }
