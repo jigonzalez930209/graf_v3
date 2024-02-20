@@ -1,0 +1,44 @@
+import { Save, Settings } from 'lucide-react'
+import Teq4zOptions from '@/assets/help-imgs/handle-files/teq4z-options.jpg'
+import ExportTeq4z from '@/assets/help-imgs/handle-files/export-teq4z.jpg'
+import ImpedaneTypes from '@/assets/help-imgs/handle-files/impedance-types.jpg'
+
+# Teq4z
+
+---
+
+Teq4z files are natively supported by the Graf application
+
+## How can handle Teq4Z files
+
+You can select the file teq4z in the lateral menu and the file will be loaded in the main side.
+
+Using the settings button, you can customize the color, width, and impedance type.
+
+<div className="w-full grid lg:grid-cols-3 justify-center">
+  <Settings className="w-10 h10" />
+  <img src={Teq4zOptions} alt="Teq4z options" className="col-span-2" />
+</div>
+>
+
+The last option allows you to change the chart type between.
+
+<img src={ImpedaneTypes} alt="Impedance Types" />
+
+## How to export Teq4 files
+
+- Click the Save icon.
+  {' '}
+
+  <Save className="w-5 h-5" />
+
+- Select the TEQ4 tab.
+  {' '}
+
+  <img src={ExportTeq4z} alt="Teq4 options" className="col-span-2" />{' '}
+
+- Choose the teq4z files you want to export by selecting them individually, the columns, the name and isSameSheet option.
+
+- Click Export to select the path to export all selected files.
+
+  {' '}
