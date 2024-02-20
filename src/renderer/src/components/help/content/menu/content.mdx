@@ -1,0 +1,137 @@
+import Menu from '@/assets/help-imgs/menu/menu.jpg'
+import {
+  CandlestickChartIcon,
+  HelpCircle,
+  LayoutTemplate,
+  LucideImport,
+  Maximize2,
+  Minimize2,
+  Minus,
+  Save,
+  Settings,
+  X
+} from 'lucide-react'
+import GrafV3 from '@/assets/help-imgs/menu/Graf_V3.jpg'
+import ProjectMenu from '@/assets/help-imgs/menu/project-menu.jpg'
+import ThemeMenu from '@/assets/help-imgs/menu/theme.jpg'
+
+# Menu
+
+---
+
+<img src={Menu} alt="Menu" />
+
+<div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'>
+  <div className='text-center'>
+
+    ### \* **Graf_V3**
+
+    <img src={GrafV3} alt="Graf_V3" className='mx-auto' />
+
+    Info abort Graf_V3
+
+  </div>
+  <div className='text-center'>
+    ### \* **Project**
+
+    <img src={ProjectMenu} alt="Project" className='mx-auto' />
+
+    Handle your projects here and create new ones. You can also import and export projects.
+
+  </div>
+
+  <div className='text-center'>
+
+    ### \* **Theme**
+
+    <img src={ThemeMenu} alt="Theme" className='mx-auto' />
+
+    Change the theme of the app here.
+
+  </div>
+
+</div>
+
+---
+
+<div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+  <div className='text-center'>
+
+    ### <div className='flex items-center w-full justify-center'> <Settings className='w-6 h-6' /> </div>
+
+    Settings to handle main chart zone.
+
+  </div>
+  <div className='text-center'>
+
+    ### <div className='flex items-center w-full justify-center'> <CandlestickChartIcon className='w-6 h-6' /> </div>
+
+    Frequency analisys using impedance files.
+
+  </div>
+
+  <div className='text-center'>
+
+    ### <div className='flex items-center w-full justify-center'> <LayoutTemplate className='w-6 h-6' /> </div>
+
+    Make a new templates for your projects.
+
+  </div>
+
+  <div className='text-center'>
+
+    ### <div className='flex items-center w-full justify-center'> <LucideImport className='w-6 h-6' /> </div>
+
+    Import files based on the template.
+
+  </div>
+
+  <div className='text-center'>
+
+    ### <div className='flex items-center w-full justify-center'> <Save className='w-6 h-6' /> </div>
+
+    Export your project.
+
+  </div>
+
+  <div className='text-center'>
+
+    ### <div className='flex items-center w-full justify-center'> <HelpCircle className='w-6 h-6' /> </div>
+
+    Help and info.
+
+  </div>
+
+  <div className='text-center'>
+
+    ### <div className='flex items-center w-full justify-center'> <Minus className='w-6 h-6' /> </div>
+
+    Minimize the app.
+
+  </div>
+
+  <div className='text-center'>
+
+    ### <div className='flex items-center w-full justify-center'> <Maximize2 className='w-6 h-6' /> </div>
+
+    Maximize the app.
+
+  </div>
+
+  <div className='text-center'>
+
+    ### <div className='flex items-center w-full justify-center'> <Minimize2 className='w-6 h-6' /> </div>
+
+    Restore the app.
+
+  </div>
+
+  <div className='text-center'>
+
+    ### <div className='flex items-center w-full justify-center'> <X className='w-6 h-6' /> </div>
+
+    Close the app.
+
+</div>
+
+</div>
