@@ -1,0 +1,39 @@
+import { Save, Settings } from 'lucide-react'
+import Teq4Options from '@/assets/help-imgs/handle-files/teq4-options.jpg'
+import ExportTeq4IMG from '@/assets/help-imgs/handle-files/export-teq4.jpg'
+
+# Teq4
+
+---
+
+Teq4 files are natively supported by the Graf application
+
+## How can handle Teq4 files
+
+You can select the file teq4 in the lateral menu and the file will be loaded in the main side.
+
+Using the settings button, you can customize the color, width, and spacing between points. The last option lets you increase the handle speed of the chart.
+
+<div className="w-full grid lg:grid-cols-3 justify-center">
+  <Settings className="w-10 h10" />
+  <img src={Teq4Options} alt="Teq4 options" className="col-span-2" />
+</div>
+>
+
+## How to export Teq4 files
+
+- Click the Save icon.
+  {' '}
+
+  <Save className="w-5 h-5" />
+
+- Select the TEQ4 tab.
+  {' '}
+
+  <img src={ExportTeq4IMG} alt="Teq4 options" className="col-span-2" />{' '}
+
+- Choose the teq4 files you want to export by selecting them individually, the columns, the name and isSameSheet option.
+
+- Click Export to select the path to export all selected files.
+
+  {' '}
