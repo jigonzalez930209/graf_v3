@@ -1,0 +1,51 @@
+import OppenAddFiles from '@/assets/help-imgs/handle-files/open-add-files.jpg'
+import DragDrop from '@/assets/help-imgs/handle-files/drag-drop.jpg'
+import { BookXIcon, GroupIcon, UngroupIcon } from 'lucide-react'
+
+# The Graf app is a tool for visualize and analyze the data from the teq4 files.
+
+## Handle files
+
+The Graf app can handle the following file types:
+
+- teq4
+- teq4Z
+- csv
+
+## Import files to the Graf app
+
+To import a file to the Graf app, you can either drag and drop the file/s into the left bar or click
+the "Project>Add files | Project> Open files" button and select the file/s you want to import.
+
+<div className="grid xl:grid-cols-2 space-6 w-full justify-around">
+  <div className="flex justify-center m-auto w-full">
+    <img src={OppenAddFiles} className="hover:scale-150 animate-slideRightAndFade" />
+  </div>
+  <img src={DragDrop} />
+</div>
+
+## Grouping files
+
+The Graf app allows you to group files by type using the "Group by" button.
+This will group the files by their type and display them in the left bar:
+
+<div className="flex w-full justify-center">
+  <GroupIcon className="h-10 w-10 text-primary" />
+</div>
+
+and ungrouped using the "Ungroup" button:
+
+<div className="flex w-full justify-center">
+  <UngroupIcon className="h-10 w-10 text-primary" />
+</div>
+
+## Selection
+
+To select a file, click on the file name in the left bar. The file will be displayed in the main area.
+The selected file will be highlighted in the left bar and the maximun number of files that can be selected is 10.
+
+To remove all selection click on the "Clear selection" button.
+
+<div className="flex w-full justify-center">
+  <BookXIcon className="h-10 w-10 text-primary" />
+</div>
