@@ -28,6 +28,7 @@ import { MenuModeToggle } from './menu-mode-toggle'
 import { ProjectMenu } from './project'
 import EventProgress from './event-progress'
 import WindowControls from './control-buttons'
+import HelpDialog from '../help/help-dialog'
 
 export function Menu() {
   const [name, setName] = React.useState('')
@@ -100,6 +101,7 @@ export function Menu() {
           )}
           <EventProgress />
         </div>
+        <HelpDialog />
         <WindowControls />
       </Menubar>
       <div className="w-full h-[1.5px] ">
