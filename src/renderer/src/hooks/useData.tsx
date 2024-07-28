@@ -21,6 +21,8 @@ type ReturnGetCSVData =
   | undefined
 
 // TODO: refactor this hook in different and more specific hooks to each cain of data
+// TODO: Refactor the gets to use the new data structure in `plot-new.tsx`
+// TODO: Separate selected files in a different state change to Tabs mode, more clear and easy to understand
 export const useData = () => {
   const {
     graftState,
@@ -248,80 +250,6 @@ export const useData = () => {
     return impedanceData
   }
 
-  // TODO: Fix export data to excel functions and separate in different hooks
-  const calculateColumn = (key: string, value: string[], isImpedance: boolean = true) => {
-    const calculate = {
-      Time: isImpedance ? parseFloat(value[0]) : value[2],
-      Frequency: parseFloat(value[1]),
-      Module: parseFloat(value[2]),
-      Face: parseFloat(value[3]),
-      ZR: parseFloat(value[2]) * Math.cos((parseFloat(value[3]) * Math.PI) / 180),
-      ZI: -parseFloat(value[2]) * Math.sin((parseFloat(value[3]) * Math.PI) / 180),
-      name: '',
-      Voltage: value[0],
-      Current: value[1]
-    }
-
-    return calculate[key]
-  }
-
-  const exportImpedanceDataToExcel = (columns: string[]) => {
-    if (columns.length > 0) {
-      return graftState.files
-        ?.filter((f) => f.selected)
-        .map((file, i) => {
-          return {
-            name: file.name,
-            value: file.content.map((c) =>
-              columns.reduce(
-                (acc, curr) => ({
-                  ...acc,
-                  [`${curr} (${i + 1})`]: calculateColumn(curr, c)
-                }),
-                {}
-              )
-            )
-          }
-        })
-    } else {
-      return []
-    }
-  }
-
-  const exportVoltammeterDataToExcel = (columns: string[]) => {
-    if (columns.length > 0) {
-      return graftState.files
-        ?.filter((f) => f.selected)
-        .map((file, i) => {
-          return {
-            name: file.name,
-            value: file.content.map((c, j) =>
-              columns.reduce(
-                (acc, curr) => ({
-                  ...acc,
-                  [`${curr} (${i + 1})`]: calculateColumn(
-                    curr,
-                    [
-                      ...c,
-                      (
-                        (((file?.voltammeter?.totalTime as number) * 1000) /
-                          (file?.pointNumber as number)) *
-                        j
-                      ).toString()
-                    ],
-                    false
-                  )
-                }),
-                {}
-              )
-            )
-          }
-        })
-    } else {
-      return []
-    }
-  }
-
   const cleanData = () => {
     setFiles([])
     setColumns([])
@@ -412,11 +340,9 @@ export const useData = () => {
     changeSelectedFile,
     getImpedanceData,
     getModuleFace,
-    exportImpedanceDataToExcel,
     getVCData,
     getZIZRvsFrequency,
     getCSVData,
-    exportVoltammeterDataToExcel,
     updateFileContent,
     cleanSelectionFiles,
     addFiles: addFilesToState
