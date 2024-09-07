@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest] # Incluye ubuntu-latest para Linux
 
     runs-on: ${{ matrix.os }}
 
@@ -30,7 +30,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 9
 
       - run: pnpm install
         env:
@@ -41,7 +41,6 @@ jobs:
 
       - name: |
           Compile artifacts to mac and upload them to github release
-        # I use this action because it is capable of retrying multiple times if there are any issues with the distribution server
         if: matrix.os == 'macos-latest'
         uses: nick-fields/retry@v2
         with:
@@ -54,11 +53,10 @@ jobs:
             ./node_modules/.bin/electron-builder --mac --config --publish always
 
         env:
-          GH_TOKEN: ${{ secrets.github_token }} # GitHub token, automatically provided (No need to define this secret in the repo settings)
+          GH_TOKEN: ${{ secrets.github_token }} # GitHub token, automatically provided
 
       - name: |
-          Compile artifacts to mac and upload them to github release
-        # I use this action because it is capable of retrying multiple times if there are any issues with the distribution server
+          Compile artifacts to windows and upload them to github release
         if: matrix.os == 'windows-latest'
         uses: nick-fields/retry@v2
         with:
@@ -71,4 +69,20 @@ jobs:
             ./node_modules/.bin/electron-builder --win --config --publish always
 
         env:
-          GH_TOKEN: ${{ secrets.github_token }} # GitHub token, automatically provided (No need to define this secret in the repo settings)
+          GH_TOKEN: ${{ secrets.github_token }} # GitHub token, automatically provided
+
+      - name: |
+          Compile artifacts to linux and upload them to github release
+        if: matrix.os == 'ubuntu-latest'
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 15
+          max_attempts: 5
+          retry_wait_seconds: 15
+          retry_on: error
+          shell: 'bash'
+          command: |
+            ./node_modules/.bin/electron-builder --linux --config --publish always
+
+        env:
+          GH_TOKEN: ${{ secrets.github_token }} # GitHub token, automatically provided

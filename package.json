@@ -3,7 +3,12 @@
   "version": "0.5.0",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
-  "author": "jigonzalez930209",
+  "author": {
+    "name": "Jose Ivan",
+    "email": "jigonzalez930209@gmail.com"
+  },
+  "license": "MIT",
+  "email": "jigonzalez930209@gmail.com",
   "homepage": "https://github.com/jigonzalez930209/graf_v3/releases",
   "build": {
     "appId": "com.jigonzalez930209.graf_v3",
@@ -52,8 +57,10 @@
     "linux": {
       "icon": "resources/graph-icon.png",
       "category": "Office",
+      "maintainer": "Jose Ivan <jigonzalez@gmail.com>",
       "description": "Graf is a data visualization tool for the TEQ4",
       "target": [
+        "AppImage",
         "deb",
         "rpm",
         "tar.gz"
