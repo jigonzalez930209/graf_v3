@@ -6,6 +6,7 @@ import { readFileSync, writeFileSync } from 'fs-extra'
 import { COLORS, supportedFileTypesArray } from '@shared/constants'
 
 import { INotification } from '@shared/models/graf'
+import path from 'path'
 
 export const getTemplates = async (): Promise<IFileRaw[] | INotification> => {
   const result = await dialog.showOpenDialog(BrowserWindow.getAllWindows()[0], {
@@ -28,7 +29,7 @@ export const getTemplates = async (): Promise<IFileRaw[] | INotification> => {
 
   const templates: (IFileRaw | undefined)[] = result.filePaths
     .map((filePath, i): IFileRaw | undefined => {
-      const fileName = filePath.split('\\').pop()
+      const fileName = path.normalize(filePath).split(path.sep).pop()
       if (!fileName) return undefined
       const type = fileType(fileName)
       const file = readFileSync(filePath, { encoding })

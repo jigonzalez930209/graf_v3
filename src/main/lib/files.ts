@@ -5,6 +5,7 @@ import { fileType } from './utils'
 import { readFile, writeFile } from 'fs-extra'
 import { dialog, BrowserWindow } from 'electron'
 import { INotification } from '@shared/models/graf'
+import path from 'path'
 
 type GetFile = IFileRaw | undefined
 
@@ -25,8 +26,7 @@ export const getFiles = async (): Promise<GetFile[] | undefined> => {
 
   const files: Promise<IFileRaw | undefined>[] = result.filePaths
     .map(async (filePath, i): Promise<IFileRaw | undefined> => {
-      const fileName = filePath.split('\\').pop()
-
+      const fileName = path.normalize(filePath).split(path.sep).pop()
       if (!fileName) return undefined
 
       const type = fileType(fileName)
@@ -50,11 +50,11 @@ export const getFiles = async (): Promise<GetFile[] | undefined> => {
   return Promise.all(files)
 }
 
-export const readFilesFromPath = async (path: string[]): Promise<GetFile[] | undefined> => {
+export const readFilesFromPath = async (pathFile: string[]): Promise<GetFile[] | undefined> => {
   try {
-    const files = path
+    const files = pathFile
       .map(async (filePath, i): Promise<IFileRaw | undefined> => {
-        const fileName = filePath.split('\\').pop()
+        const fileName = path.normalize(filePath).split(path.sep).pop()
         if (!fileName) return undefined
 
         const type = fileType(fileName)
@@ -94,6 +94,7 @@ export const importFilesFromLoader = async (): Promise<IFileRaw[] | undefined> =
   )
     return undefined
   else {
+    console.log(process.argv)
     const file = readFilesFromPath([process.argv[1]]) as Promise<IFileRaw[] | undefined>
     process.argv[1] = '.'
     return file
@@ -155,7 +156,7 @@ export const getBinaryFiles = async (): Promise<IFileBinary[] | undefined> => {
 
   const files: Promise<IFileBinary | undefined>[] = result.filePaths
     .map(async (filePath): Promise<IFileBinary | undefined> => {
-      const fileName = filePath.split('\\').pop()
+      const fileName = path.normalize(filePath).split(path.sep).pop()
 
       if (!fileName) return undefined
 
