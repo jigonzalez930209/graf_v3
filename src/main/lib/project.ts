@@ -4,6 +4,7 @@ import { BrowserWindow, dialog } from 'electron'
 import { readFile, writeFileSync } from 'fs-extra'
 import { fileType } from './utils'
 import { IFileRaw } from '@shared/models/files'
+import path from 'path'
 
 export const saveProject = async (project: string, isSilent = false): Promise<INotification> => {
   if (isSilent) {
@@ -86,7 +87,7 @@ export const getGrafState = async (isSilent = false): Promise<IFileRaw | undefin
   }
 
   const [filePath] = result.filePaths
-  const fileName = filePath.split('\\').pop()
+  const fileName = path.normalize(filePath).split(path.sep).pop()
   if (!fileName) return undefined
   const type = fileType(fileName)
   const grafState = await readFile(filePath, { encoding })

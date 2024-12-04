@@ -82,7 +82,7 @@ jobs:
           retry_on: error
           shell: 'bash'
           command: |
-            ./node_modules/.bin/electron-builder --linux --config --publish always
+            sudo apt install rpm && ./node_modules/.bin/electron-builder --linux --config --publish always
 
         env:
           GH_TOKEN: ${{ secrets.github_token }} # GitHub token, automatically provided
