@@ -103,7 +103,7 @@ const App = () => {
             preventDuplicate
           >
             <Toaster />
-            <div className="h-screen overflow-clip">
+            <main className="h-screen overflow-clip relative">
               <Menu />
               <div
                 className={cn(
@@ -116,7 +116,7 @@ const App = () => {
               >
                 <Graf />
               </div>
-            </div>
+            </main>
           </SnackbarProvider>
         </LoaderProvider>
       </ToastProvider>
