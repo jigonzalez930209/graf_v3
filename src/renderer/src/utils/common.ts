@@ -242,7 +242,10 @@ const homogenizeMatrix = (matrix, defaultValue) => {
 
 const generateRandomId = () => (+new Date() * Math.random()).toString(36).substring(0, 6)
 
-const arrayBufferToString = (buffer: ArrayBuffer, encoding = 'UTF-8'): Promise<string> => {
+const arrayBufferToString = (
+  buffer: Buffer<ArrayBufferLike>,
+  encoding = 'UTF-8'
+): Promise<string> => {
   return new Promise<string>((resolve, reject) => {
     const blob = new Blob([buffer], { type: 'text/plain' })
     const reader = new FileReader()

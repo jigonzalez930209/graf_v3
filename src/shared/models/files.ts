@@ -53,7 +53,7 @@ type IFileRaw = {
 type IFileBinary = {
   name: string
   type: IFileType
-  content: ArrayBuffer
+  content: Buffer<ArrayBufferLike>
 }
 
 type GroupedFiles = {
