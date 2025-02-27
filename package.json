@@ -161,7 +161,7 @@
     "cross-env": "^7.0.3",
     "csv-string": "^4.1.1",
     "date-fns": "^2.30.0",
-    "electron": "^28.2.2",
+    "electron": "^34.2.0",
     "electron-builder": "^24.9.1",
     "electron-vite": "^2.0.0",
     "eslint": "^8.56.0",
@@ -232,5 +232,10 @@
         "CSV"
       ]
     }
-  ]
+  ],
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "electron"
+    ]
+  }
 }
