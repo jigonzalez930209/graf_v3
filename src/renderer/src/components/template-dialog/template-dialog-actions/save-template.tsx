@@ -4,17 +4,19 @@ import { SaveIcon } from 'lucide-react'
 import { enqueueSnackbar } from 'notistack'
 
 import { Button } from '@/components/ui/button'
+import useLoader from '@renderer/hooks/useLoader'
 
 type SaveTemplateProps = {
-  setLoading: (boolean) => void
   columns: Template['columns']
   selected: ExcelTableSelected | undefined
   isModulePhase: boolean | undefined
 }
 
-const SaveTemplate = ({ setLoading, columns, selected, isModulePhase }: SaveTemplateProps) => {
+const SaveTemplate = ({ columns, selected, isModulePhase }: SaveTemplateProps) => {
+  const { startLoading, stopLoading } = useLoader()
+
   const handleClickSaveFileTemplate = React.useCallback(async () => {
-    setLoading(true)
+    startLoading()
     await window.context
       .saveTemplate(
         JSON.stringify({
@@ -30,7 +32,7 @@ const SaveTemplate = ({ setLoading, columns, selected, isModulePhase }: SaveTemp
         enqueueSnackbar(err.toString(), { variant: 'error' })
       })
       .finally(() => {
-        setLoading(false)
+        stopLoading()
       })
   }, [columns])
 

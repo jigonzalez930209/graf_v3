@@ -6,7 +6,7 @@ import Drawer from '@/components/drawer'
 import PlotlyChart from '@/components/plot/plot'
 
 import { GrafContext } from '../context/GraftContext'
-import { LoadingsContext } from '../context/Loading'
+import useLoading from '../hooks/useLoader'
 import { PlotParams } from 'react-plotly.js'
 
 import { IProcessFile } from '@shared/models/files'
@@ -15,15 +15,13 @@ import usePlotlyOptions from '../hooks/usePlotlyOptions'
 
 const Graf = () => {
   const { graftState } = React.useContext(GrafContext)
-  const {
-    loading: { loading }
-  } = React.useContext(LoadingsContext)
+  const { isLoading } = useLoading()
 
   const { data, layout, config } = usePlotlyOptions()
 
   return (
     <div>
-      {loading && <Loader />}
+      {isLoading && <Loader />}
       <div className="flex max-h-full max-w-full">
         <Drawer />
         {graftState?.fileType === 'csv' ? (

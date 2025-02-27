@@ -5,24 +5,20 @@ import { enqueueSnackbar } from 'notistack'
 
 import { Button } from '@/components/ui/button'
 import { supportedFileTypeObject } from '@shared/constants'
+import useLoader from '@renderer/hooks/useLoader'
 
 type OpenTemplateProps = {
-  setLoading: (boolean) => void | undefined
   setColumns: React.Dispatch<React.SetStateAction<Template['columns']>>
   setSelected: React.Dispatch<React.SetStateAction<ExcelTableSelected | undefined>>
   data: ExcelTableData | undefined
   setIsModulePhase: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const OpenTemplate = ({
-  setLoading,
-  setColumns,
-  setSelected,
-  data,
-  setIsModulePhase
-}: OpenTemplateProps) => {
+const OpenTemplate = ({ setColumns, setSelected, data, setIsModulePhase }: OpenTemplateProps) => {
+  const { startLoading, stopLoading } = useLoader()
+
   const handleOpenImportTemplate = React.useCallback(async () => {
-    setLoading(true)
+    startLoading()
     await window.context
       .getTemplates()
       .then((templates) => {
@@ -43,7 +39,7 @@ const OpenTemplate = ({
         enqueueSnackbar(err.toString(), { variant: 'error' })
       })
       .finally(() => {
-        setLoading(false)
+        stopLoading()
       })
   }, [])
 

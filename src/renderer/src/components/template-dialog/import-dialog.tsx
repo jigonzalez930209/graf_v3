@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { LoadingsContext } from '@/context/Loading'
+import { LoaderProvider } from '@/context/Loading'
 import useImportData from '@/hooks/useImportData'
 import { IProcessFile } from '@shared/models/files'
 import { HandleSelectColumns, handleImport } from '@/utils/dialog-table-utils'
@@ -20,12 +20,13 @@ import ImportFile from './template-dialog-actions/import-file'
 import OpenTemplate from './template-dialog-actions/open-template'
 import SaveTemplate from './template-dialog-actions/save-template'
 import SelectionFooter from './template-dialog-actions/selection-footer'
+import useLoader from '@renderer/hooks/useLoader'
 
 // TODO: Add params input
 
 const ImportDialog = () => {
   const { importDataTeq4Z } = useImportData()
-  const { setLoading } = React.useContext(LoadingsContext)
+  const { isLoading, startLoading, stopLoading } = useLoader()
   const [data, setData] = useState<ExcelTableData>()
   const [selected, setSelected] = useState<ExcelTableSelected>()
   const [open, setOpen] = useState(false)
@@ -89,20 +90,13 @@ const ImportDialog = () => {
         <DialogTitle className="flex items-center gap-10">
           Import Data From Text File
           <ImportFile
-            setLoading={setLoading}
             setColumns={setColumns}
             setData={setData}
             setSelected={setSelected}
             setParams={setParams}
           />
-          <SaveTemplate
-            isModulePhase={isModulePhase}
-            setLoading={setLoading}
-            selected={selected}
-            columns={columns}
-          />
+          <SaveTemplate isModulePhase={isModulePhase} selected={selected} columns={columns} />
           <OpenTemplate
-            setLoading={setLoading}
             data={data}
             setColumns={setColumns}
             setSelected={setSelected}
@@ -139,7 +133,8 @@ const ImportDialog = () => {
                   params,
                   importDataTeq4Z,
                   enqueueSnackbar,
-                  setLoading,
+                  startLoading,
+                  stopLoading,
                   setOpen,
                   selected: selected as ExcelTableSelected
                 })

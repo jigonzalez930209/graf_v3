@@ -1,52 +1,37 @@
 import * as React from 'react'
 
-export type LoadingsContextProps = {
-  loading: { loading: boolean }
-  setLoading: (loading: boolean) => void
+export type LoaderContextProps = {
+  isLoading: boolean
+  startLoading: () => void
+  stopLoading: () => void
 }
 
-export const LoadingsContext = React.createContext<LoadingsContextProps>({} as LoadingsContextProps)
+export const LoaderContext = React.createContext<LoaderContextProps | null>(null)
 
-interface props {
-  children: JSX.Element | JSX.Element[]
-  initialState: boolean
+interface LoaderProviderProps {
+  children: React.ReactNode
 }
 
-export const LoadingProvider = ({ children, initialState }: props) => {
-  const [loading, dispatch] = React.useReducer(loadingReducer, { loading: initialState })
+export const LoaderProvider = ({ children }: LoaderProviderProps) => {
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
-  const setLoading = (loading: boolean) => dispatch({ type: 'setLoading', payload: loading })
+  const startLoading = React.useCallback(() => {
+    setIsLoading(true)
+  }, [])
 
-  React.useEffect(() => {
-    setLoading(initialState)
-  }, [initialState])
+  const stopLoading = React.useCallback(() => {
+    setIsLoading(false)
+  }, [])
 
   return (
-    <LoadingsContext.Provider
+    <LoaderContext.Provider
       value={{
-        loading,
-        setLoading
+        isLoading,
+        startLoading,
+        stopLoading
       }}
     >
       {children}
-    </LoadingsContext.Provider>
+    </LoaderContext.Provider>
   )
-}
-
-type LoadingAction = {
-  type: 'setLoading'
-
-  payload: boolean
-}
-
-export const loadingReducer = (state: { loading: boolean }, action: LoadingAction) => {
-  switch (action.type) {
-    case 'setLoading':
-      return {
-        loading: action.payload as boolean
-      }
-
-    default:
-      return state
-  }
 }

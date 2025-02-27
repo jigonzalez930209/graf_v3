@@ -51,14 +51,16 @@ type HandleImportProps = {
   columns: Template['columns']
   selected: ExcelTableSelected
   data: ExcelTableData | undefined
-  setLoading: (loading: boolean) => void
+  startLoading: () => void
+  stopLoading: () => void
   setOpen?: (open: boolean) => void
   params: IProcessFile['impedance'] & { name: string }
   importDataTeq4Z: (d: ImportData) => void
   enqueueSnackbar: EnqueueSnackbar
 }
 const handleImport = ({
-  setLoading,
+  stopLoading,
+  startLoading,
   columns,
   selected,
   data,
@@ -67,7 +69,7 @@ const handleImport = ({
   setOpen,
   enqueueSnackbar
 }: HandleImportProps): boolean => {
-  setLoading(true)
+  startLoading()
   try {
     const indexes: Indexes = {
       frequency: columns.frequency.col,
@@ -107,13 +109,13 @@ const handleImport = ({
     }
 
     setOpen?.(false)
-    setLoading(false)
     return true
   } catch (e) {
     enqueueSnackbar('Something went wrong' + e, { variant: 'error' })
     console.log(e)
-    setLoading(false)
     return false
+  } finally {
+    stopLoading()
   }
 }
 

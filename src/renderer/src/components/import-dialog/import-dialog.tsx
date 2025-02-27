@@ -18,14 +18,15 @@ import CustomTooltip from '../ui/tooltip'
 import FileContent from './import-dialog-actions/file-content'
 import ImportFiles, { importedFile } from './import-dialog-actions/import-files'
 import ImportTemplate from './import-dialog-actions/import-template'
+import useLoader from '@renderer/hooks/useLoader'
 
 const ImportDialog = () => {
+  const { stopLoading, startLoading } = useLoader()
   const [selectedTemplate, setSelectedTemplate] = React.useState<TemplateListItem>()
   const [selectedFile, setSelectedFile] = React.useState<importedFile>()
   const [importedFiles, setImportedFiles] = React.useState<importedFile[]>([])
   const [templates, setTemplates] = React.useState<TemplateList>([])
   const [open, setOpen] = React.useState<boolean>(false)
-  const [loading, setLoading] = React.useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
   const { importDataTeq4Z } = useImportData()
@@ -35,7 +36,8 @@ const ImportDialog = () => {
       if (selectedTemplate) {
         return handleImport({
           columns: selectedTemplate.template.columns,
-          setLoading,
+          startLoading,
+          stopLoading,
           enqueueSnackbar,
           data: f.content,
           importDataTeq4Z,
@@ -60,7 +62,7 @@ const ImportDialog = () => {
       setImportedFiles([])
       setSelectedTemplate(undefined)
     }
-    setLoading(false)
+    stopLoading()
   }
   return (
     <Dialog open={open}>

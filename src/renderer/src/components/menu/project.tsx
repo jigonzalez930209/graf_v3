@@ -14,18 +14,18 @@ import { useToast } from '../ui/use-toast'
 import { readGrafFile, readNativeFiles, stringifyToSave } from '@renderer/utils/connectors'
 import { IGraftState } from '@shared/models/graf'
 import { enqueueSnackbar } from 'notistack'
+import useLoader from '@renderer/hooks/useLoader'
 
 export const ProjectMenu = () => {
   const { graftState, setGraftState } = React.useContext(GrafContext)
-  const [loading, setLoading] = React.useState(false)
+  const { startLoading, stopLoading } = useLoader()
   const t = useToast()
   const { addFiles } = useData()
 
   const addNewProject = () => {}
 
   const readFiles = React.useCallback(async () => {
-    setLoading(true)
-
+    startLoading()
     window.context
       .getFiles()
       .then((files) => {
@@ -45,12 +45,12 @@ export const ProjectMenu = () => {
         console.log(err)
       })
       .finally(() => {
-        setLoading(false)
+        stopLoading()
       })
   }, [])
 
   const openProject = React.useCallback(async () => {
-    setLoading(true)
+    startLoading()
     window.context
       .getGrafState()
       .then((state) => {
@@ -63,12 +63,12 @@ export const ProjectMenu = () => {
         console.log(err)
       })
       .finally(() => {
-        setLoading(false)
+        startLoading()
       })
   }, [])
 
   const saveProject = React.useCallback(async () => {
-    setLoading(true)
+    startLoading()
     window.context
       .saveProject(stringifyToSave<IGraftState>(graftState, 'graft'))
       .then((n) => {
@@ -79,7 +79,7 @@ export const ProjectMenu = () => {
         console.log(err)
       })
       .finally(() => {
-        setLoading(false)
+        stopLoading()
       })
   }, [graftState])
 

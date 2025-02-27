@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/toaster'
 import { Menu } from '@/components/menu/menu'
 import { ThemeProvider } from '@/components/theme-provider'
 
-import { LoadingProvider } from './context/Loading'
+import { LoaderContext, LoaderProvider } from './context/Loading'
 import Graf from '@/components/graf'
 import { GrafContext } from './context/GraftContext'
 import { readFilesUnsortedFileType } from './utils/connectors'
@@ -95,7 +95,7 @@ const App = () => {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <ToastProvider>
-        <LoadingProvider initialState={false}>
+        <LoaderProvider>
           <SnackbarProvider
             maxSnack={4}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
@@ -118,7 +118,7 @@ const App = () => {
               </div>
             </div>
           </SnackbarProvider>
-        </LoadingProvider>
+        </LoaderProvider>
       </ToastProvider>
     </ThemeProvider>
   )

@@ -6,14 +6,17 @@ import XLSX from 'xlsx'
 
 import { Button } from '@/components/ui/button'
 import { supportedFileTypeObject } from '@shared/constants'
+import useLoader from '@renderer/hooks/useLoader'
 
-const ImportFile = ({ setLoading, setData, setSelected, setColumns, setParams }) => {
+const ImportFile = ({ setData, setSelected, setColumns, setParams }) => {
+  const { startLoading, stopLoading } = useLoader()
+
   const handleImportClick = async () => {
-    setLoading(true)
+    startLoading()
     setData(null)
     setSelected(null)
     setColumns([])
-    await window.context
+    window.context
       .getBinaryFiles()
       .then(async (files) => {
         if (files === undefined) {
@@ -80,6 +83,9 @@ const ImportFile = ({ setLoading, setData, setSelected, setColumns, setParams })
       .catch((err) => {
         console.log('err', err)
         return enqueueSnackbar('File not supported', { variant: 'error' })
+      })
+      .finally(() => {
+        stopLoading()
       })
   }
 
