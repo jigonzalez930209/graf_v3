@@ -7,9 +7,11 @@ import { IFileRaw } from '@shared/models/files'
 import path from 'path'
 
 export const saveProject = async (project: string, isSilent = false): Promise<INotification> => {
+  const defaultExtension = '.graft'
+
   if (isSilent) {
     if (project) {
-      await writeFileSync('graf-state.graft', project, { encoding })
+      await writeFileSync(`graf-state${defaultExtension}`, project, { encoding })
       return {
         type: 'success',
         content: 'Project saved',
@@ -22,7 +24,7 @@ export const saveProject = async (project: string, isSilent = false): Promise<IN
       title: 'Warming'
     }
   }
-  const result = await dialog.showSaveDialog(BrowserWindow.getAllWindows()[0], {
+  const result = await dialog.showSaveDialog({
     properties: ['createDirectory'],
     filters: [
       {
@@ -40,13 +42,18 @@ export const saveProject = async (project: string, isSilent = false): Promise<IN
     }
   }
 
-  const { filePath } = result
+  let filePath = result.filePath
   if (!filePath)
     return {
       type: 'error',
       content: 'Project not saved',
       title: 'Error'
     }
+
+  if (path.extname(filePath) !== defaultExtension) {
+    filePath = filePath + defaultExtension
+  }
+
   await writeFileSync(filePath, project, { encoding })
   return {
     type: 'success',
@@ -77,7 +84,7 @@ export const getGrafState = async (isSilent = false): Promise<IFileRaw | undefin
     filters: [
       {
         name: 'Graf files',
-        extensions: ['graft']
+        extensions: ['graft', 'all']
       }
     ]
   })
