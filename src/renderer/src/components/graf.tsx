@@ -1,5 +1,4 @@
 import React from 'react'
-import { Loader } from 'lucide-react'
 
 import DragDrop from '@/components/drag-drop/drag-drop'
 import Drawer from '@/components/drawer'
@@ -12,6 +11,7 @@ import { PlotParams } from 'react-plotly.js'
 import { IProcessFile } from '@shared/models/files'
 
 import usePlotlyOptions from '../hooks/usePlotlyOptions'
+import Loader from './loader'
 
 const Graf = () => {
   const { graftState } = React.useContext(GrafContext)
@@ -20,7 +20,7 @@ const Graf = () => {
   const { data, layout, config } = usePlotlyOptions()
 
   return (
-    <div>
+    <>
       {isLoading && <Loader />}
       <div className="flex max-h-full max-w-full">
         <Drawer />
@@ -46,7 +46,7 @@ const Graf = () => {
           />
         )}
       </div>
-    </div>
+    </>
   )
 }
 export default Graf
