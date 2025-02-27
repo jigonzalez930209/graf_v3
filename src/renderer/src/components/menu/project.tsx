@@ -63,7 +63,7 @@ export const ProjectMenu = () => {
         console.log(err)
       })
       .finally(() => {
-        startLoading()
+        stopLoading()
       })
   }, [])
 
