@@ -15,6 +15,9 @@ try {
     send: (event, args) => ipcRenderer.send(event, args),
     invoke: (event, args) => ipcRenderer.invoke(event, args),
     removeAllListeners: (event) => ipcRenderer.removeAllListeners(event),
+    getWindowSize: () => {
+      return ipcRenderer.invoke('get-window-size')
+    },
 
     getFiles: async () => {
       const files = await ipcRenderer.invoke('getFiles')

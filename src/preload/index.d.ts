@@ -58,6 +58,7 @@ declare global {
       quit: () => void
       maximize: () => boolean
       minimize: () => void
+      getWindowSize: () => { width: number; height: number }
     }
   }
 }
