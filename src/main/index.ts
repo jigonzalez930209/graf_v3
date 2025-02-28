@@ -186,6 +186,10 @@ app.whenReady().then(() => {
       window.minimize()
     }
   })
+  ipcMain.handle('get-window-size', async () => {
+    const bounds = BrowserWindow.getFocusedWindow()?.getBounds()
+    return { width: bounds?.width || 0, height: bounds?.height || 0 }
+  })
 
   createWindow()
 
