@@ -45,8 +45,8 @@ const FileSort = (props: FileSortProps) => {
   )
 
   return (
-    <Container maxHeight={maxHeight} className="relative">
-      <div className="py-2">
+    <div className="relative">
+      <div className="py-2 w-full">
         {isFilesGrouped ? (
           <Accordion type="single" collapsible className="w-full px-3">
             <AccordionItem value="teq4">
@@ -89,7 +89,7 @@ const FileSort = (props: FileSortProps) => {
         )}
         {children}
       </div>
-    </Container>
+    </div>
   )
 }
 

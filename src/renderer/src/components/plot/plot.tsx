@@ -4,16 +4,25 @@ import { useTheme } from 'next-themes'
 import Plotly, { PlotParams } from 'react-plotly.js'
 
 import { defaultTheme } from '@/utils'
+import { useScreen } from 'usehooks-ts'
 
 type PlotlyChartProps = {
   exportFileName: string | undefined
-  fileType: IProcessFile['type']
+  fileType: IProcessFile['type'] | null
   data: PlotParams['data']
   layout: PlotParams['layout']
   config: PlotParams['config']
+  width: number
 }
 
-const PlotlyChart = ({ exportFileName, fileType, data, layout, config }: PlotlyChartProps) => {
+const PlotlyChart = ({
+  exportFileName,
+  fileType,
+  data,
+  layout,
+  config,
+  width
+}: PlotlyChartProps) => {
   const theme = useTheme()
   const t = defaultTheme(theme)
   const [zoomState, setZoomState] = React.useState<{
@@ -26,11 +35,35 @@ const PlotlyChart = ({ exportFileName, fileType, data, layout, config }: PlotlyC
     setZoomState(null)
   }, [fileType])
 
+  // const a = useScreen()
+  // console.log(a)
+  const [windowSize, setWindowSize] = React.useState({ width: 0, height: 0 })
+
+  React.useEffect(() => {
+    const obtainWindowSize = async () => {
+      const size = await window.context.getWindowSize()
+      if (size) {
+        setWindowSize(size)
+        console.log(size)
+      }
+    }
+
+    obtainWindowSize()
+
+    window.addEventListener('resize', obtainWindowSize)
+    return () => {
+      window.removeEventListener('resize', obtainWindowSize)
+    }
+  }, [width])
+
   return (
     <Plotly
+      className="w-full h-full"
       data={data}
       layout={{
         ...layout,
+        width: (windowSize.width * width) / 100,
+        height: windowSize.height - 48,
         autosize: true,
         plot_bgcolor: t === 'dark' ? '#000' : '#fff',
         paper_bgcolor: t === 'dark' ? '#000' : '#fff',

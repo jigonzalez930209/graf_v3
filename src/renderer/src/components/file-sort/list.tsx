@@ -11,7 +11,7 @@ const List = React.forwardRef<HTMLUListElement, ListProps>((props, ref) => {
   return (
     <ul
       ref={ref as React.RefObject<HTMLUListElement>}
-      className={cn('flex max-w-[240px] flex-col', className)}
+      className={cn('flex w-full flex-col', className)}
       {...rest}
     >
       {children}

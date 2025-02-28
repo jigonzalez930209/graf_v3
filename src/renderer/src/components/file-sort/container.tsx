@@ -13,7 +13,7 @@ const Container = React.forwardRef<HTMLDivElement, ContainerProps>((props, ref) 
   const { className, maxHeight, children, ...rest } = props
 
   return (
-    <div className="min-w-[245px] text-sm ">
+    <div className="text-sm ">
       <ScrollArea
         ref={ref}
         className={cn(className, maxHeight || 'max-h-[calc(100vh)]')}
