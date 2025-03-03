@@ -78,7 +78,7 @@ const Drawer = () => {
   }, [])
 
   return (
-    <div className="h-[calc(100vh-3rem)] w-full transition-all duration-300 ease-in-out border-r-2">
+    <div className="h-[calc(100vh-3rem)] max-h-[calc(100vh-3rem)] w-full transition-all duration-300 ease-in-out border-r-2">
       <div
         className={cn(
           'sticky top-0 z-50 flex w-full justify-between gap-4 bg-secondary px-3 py-1 border-b-2',
@@ -136,7 +136,7 @@ const Drawer = () => {
           }}
         >
           <div className="w-full h-[calc(100vh-4.5rem)] animate-fadeIn transition-all duration-250 ease-in-out">
-            <FileSort groupedFiles={groupedFiles} maxHeight="h-[calc(100vh-6.2rem)]" />
+            <FileSort groupedFiles={groupedFiles} />
           </div>
         </div>
       )}
