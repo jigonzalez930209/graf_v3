@@ -38,9 +38,9 @@ const Item = React.forwardRef<HTMLLIElement, ItemProps>((props, ref) => {
           key={file.id}
           className={cn(
             className,
-            'w-full flex select-none items-center space-x-2 px-2 my-1.5 hover:bg-secondary rounded-md cursor-pointer hover:right-1  hover:ring-secondary/25',
+            'w-full flex select-none items-center space-x-2 px-2 my-1.5 hover:bg-secondary rounded-md cursor-pointer',
             Boolean(files.find((d) => d.id === file.id)?.selected) &&
-              'bg-secondary/50 shadow-md ring-1 ring-primary/15'
+              'bg-secondary/70 shadow-md ring-1 ring-primary/15'
           )}
           {...rest}
         >
@@ -121,7 +121,7 @@ const Item = React.forwardRef<HTMLLIElement, ItemProps>((props, ref) => {
               </>
             )}
           </div>
-          <HoverCardArrow className=" fill-slate-500" />
+          <HoverCardArrow className="fill-slate-500" />
         </HoverCardContent>
       </HoverCardPortal>
     </HoverCard>
