@@ -11,14 +11,11 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion'
 
-import Container from './container'
 import Item from './item'
 import List from './list'
 import { GroupedFiles } from '@shared/models/files'
 
 type FileSortProps = {
-  maxHeight?: string
-  children?: React.ReactNode
   groupedFiles: GroupedFiles
 }
 
@@ -26,7 +23,7 @@ const FileSort = (props: FileSortProps) => {
   const {
     graftState: { isFilesGrouped, files }
   } = React.useContext(GrafContext)
-  const { maxHeight, children, groupedFiles } = props
+  const { groupedFiles } = props
 
   const { changeSelectedFile } = useData()
   const { enqueueSnackbar } = useSnackbar()
@@ -45,8 +42,8 @@ const FileSort = (props: FileSortProps) => {
   )
 
   return (
-    <div className="relative">
-      <div className="py-2 w-full">
+    <div className="mx-auto grow h-[calc(100vh-52px-45.5px)] flex flex-col">
+      <div className="flex flex-col grow overflow-auto gap-2  scrollbar-thumb-primary/20 hover:scrollbar-thumb-primary/50">
         {isFilesGrouped ? (
           <Accordion type="single" collapsible className="w-full px-3">
             <AccordionItem value="teq4">
@@ -87,7 +84,6 @@ const FileSort = (props: FileSortProps) => {
             ))}
           </List>
         )}
-        {children}
       </div>
     </div>
   )
