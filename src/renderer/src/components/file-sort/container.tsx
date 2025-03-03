@@ -16,12 +16,15 @@ const Container = React.forwardRef<HTMLDivElement, ContainerProps>((props, ref) 
     <div className="text-sm ">
       <ScrollArea
         ref={ref}
-        className={cn(className, maxHeight || 'max-h-[calc(100vh)]')}
+        className={cn(className, maxHeight || 'max-h-[calc(100vh-44px-45.5px)]')}
         viewPortClassName={maxHeight}
         {...rest}
       >
         {children}
-        <ScrollBar orientation="vertical" className={cn(maxHeight || 'max-h-[calc(100vh)]')} />
+        <ScrollBar
+          orientation="vertical"
+          className={cn(maxHeight || 'max-h-[calc(100vh-44px-45.5px)]')}
+        />
       </ScrollArea>
     </div>
   )
