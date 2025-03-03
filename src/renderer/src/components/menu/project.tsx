@@ -15,6 +15,7 @@ import { readGrafFile, readNativeFiles, stringifyToSave } from '@renderer/utils/
 import { IGraftState } from '@shared/models/graf'
 import { enqueueSnackbar } from 'notistack'
 import useLoader from '@renderer/hooks/useLoader'
+import { INITIAL_STATE } from '@renderer/context/GraftProvider'
 
 export const ProjectMenu = () => {
   const { graftState, setGraftState } = React.useContext(GrafContext)
@@ -22,7 +23,7 @@ export const ProjectMenu = () => {
   const t = useToast()
   const { addFiles } = useData()
 
-  const addNewProject = () => {}
+  const newProject = () => setGraftState(INITIAL_STATE)
 
   const readFiles = React.useCallback(async () => {
     startLoading()
@@ -88,8 +89,8 @@ export const ProjectMenu = () => {
       <MenubarTrigger className="relative hover:bg-secondary">Project</MenubarTrigger>
       <MenubarContent>
         {/* TODO: Implement handle project in next versions */}
-        <MenubarItem disabled onClick={addNewProject}>
-          New
+        <MenubarItem onClick={newProject}>
+          New Project
           {/* <MenubarShortcut>⌘N</MenubarShortcut> */}
         </MenubarItem>
         <MenubarItem onClick={readFiles}>
