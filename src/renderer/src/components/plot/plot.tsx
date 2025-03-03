@@ -44,7 +44,6 @@ const PlotlyChart = ({
       const size = await window.context.getWindowSize()
       if (size) {
         setWindowSize(size)
-        console.log(size)
       }
     }
 
