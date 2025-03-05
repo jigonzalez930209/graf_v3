@@ -95,6 +95,7 @@
     "electron-updater": "^6.1.7",
     "fs-extra": "^11.2.0",
     "lodash": "^4.17.21",
+    "react-dropzone": "^14.3.8",
     "react-resizable-panels": "^2.1.7",
     "xlsx": "https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz"
   },
