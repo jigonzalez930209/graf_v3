@@ -3,6 +3,7 @@ import XLSX from 'xlsx'
 
 import { IProcessFile, VoltameterParameters } from '@shared/models/files'
 import { ConcInputValue, FrequencyValues } from '@shared/models/graf'
+import { supportedFileTypeObject } from '@shared/constants'
 
 const excelFileType =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8'
@@ -10,6 +11,12 @@ const excelFileType =
 type WebBook = {
   Sheets: { [key: string]: XLSX.WorkSheet }
   SheetNames: string[]
+}
+
+export const fileType = (fileName: string) => {
+  const ext = fileName.split('.').pop()
+
+  return ext ? supportedFileTypeObject[ext.toLocaleLowerCase()] : undefined
 }
 
 const exportExcelFrequencyAnalysis = async ({
@@ -243,7 +250,7 @@ const homogenizeMatrix = (matrix, defaultValue) => {
 const generateRandomId = () => (+new Date() * Math.random()).toString(36).substring(0, 6)
 
 const arrayBufferToString = (
-  buffer: Buffer<ArrayBufferLike>,
+  buffer: Buffer<ArrayBufferLike> | ArrayBuffer,
   encoding = 'UTF-8'
 ): Promise<string> => {
   return new Promise<string>((resolve, reject) => {

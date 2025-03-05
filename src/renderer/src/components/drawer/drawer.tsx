@@ -1,18 +1,79 @@
 import React from 'react'
-import { ChevronLeft, ChevronRight, GroupIcon, UngroupIcon } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { enqueueSnackbar } from 'notistack'
 
 import { readFilesUnsortedFileType } from '@renderer/utils/connectors'
 import { GrafContext } from '@/context/GraftContext'
 import { GroupedFiles } from '@shared/models/files'
-import { cn } from '@/utils'
+import { cn, COLORS } from '@/utils'
 
 import FileSort from '../file-sort'
 import { Button } from '../ui/button'
 import RemoveSelection from './remove-selection'
 import GroupFiles from './group-files'
+import { useDropzone } from 'react-dropzone'
+import { arrayBufferToString, fileType } from '@renderer/utils/common'
 
 const Drawer = () => {
+  const onDrop = React.useCallback(async (acceptedFiles) => {
+    try {
+      const filePromises = acceptedFiles.map((file, index) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader()
+
+          reader.onabort = () => {
+            console.log('File reading was aborted')
+            reject(new Error('File reading was aborted'))
+          }
+
+          reader.onerror = () => {
+            console.log('File reading has failed')
+            reject(new Error('File reading has failed'))
+          }
+
+          reader.onload = async () => {
+            const result = reader.result
+            if (!result) {
+              return reject(new Error('not found result to read file'))
+            }
+            try {
+              const content = await arrayBufferToString(result as ArrayBuffer)
+              const type = fileType(file.name)
+              if (type === undefined) return resolve(null)
+              resolve({
+                content,
+                name: file.name,
+                type,
+                color: COLORS[index]
+              })
+            } catch (error) {
+              reject(error)
+            }
+          }
+
+          reader.readAsArrayBuffer(file)
+        })
+      })
+
+      const files = await Promise.all(filePromises)
+      const validFiles = files.filter((file) => file !== null)
+
+      const filesProcessed = readFilesUnsortedFileType(validFiles)
+      if (Array.isArray(filesProcessed)) setFiles(filesProcessed)
+      else if (filesProcessed === undefined) {
+        enqueueSnackbar('error', { variant: 'error' })
+      } else {
+        setGraftState(filesProcessed)
+      }
+      setShouldHighlight(false)
+    } catch (error) {
+      console.error('Error processing files:', error)
+      enqueueSnackbar('error', { variant: 'error' })
+      setShouldHighlight(false)
+    }
+  }, [])
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop })
   const {
     graftState: { drawerOpen, isFilesGrouped, files },
     setDrawerOpen,
@@ -59,24 +120,6 @@ const Drawer = () => {
     e.stopPropagation()
   }, [])
 
-  const handleDropFiles = React.useCallback((e: string[]) => {
-    window.context
-      .readFilesFromPath(e)
-      .then((files) => {
-        const processedFiles = readFilesUnsortedFileType(files.filter((f) => f !== undefined))
-        if (Array.isArray(processedFiles)) {
-          return setFiles(processedFiles)
-        } else if (typeof processedFiles === 'object') {
-          return setGraftState(processedFiles)
-        } else {
-          return enqueueSnackbar('Something went wrong read the files doped into the app', {
-            variant: 'error'
-          })
-        }
-      })
-      .catch(console.error)
-  }, [])
-
   return (
     <div className="h-[calc(100vh-3rem)] max-h-[calc(100vh-3rem)] w-full transition-all duration-300 ease-in-out border-r-2">
       <div
@@ -109,6 +152,7 @@ const Drawer = () => {
       </div>
       {drawerOpen && (
         <div
+          {...getRootProps()}
           className={cn(
             'z-0 mr-2 flex drop-shadow-lg animate-fade-in transition-all duration-300 ease-in-out',
             shouldHighlight && ' bg-gray-400 ring-2'
@@ -125,16 +169,10 @@ const Drawer = () => {
             preventDefaultHandler(e)
             setShouldHighlight(false)
           }}
-          onDrop={(e) => {
-            const {
-              dataTransfer: { files }
-            } = e
-            const filesPath = (Array.from(files) as (File & { path: string })[]).map((f) => f.path)
-            preventDefaultHandler(e)
-            handleDropFiles(filesPath)
-            setShouldHighlight(false)
-          }}
+          onClick={(e) => e.preventDefault()}
         >
+          <input {...getInputProps()} className="hidden" />
+
           <div className="w-full h-[calc(100vh-4.5rem)] animate-fadeIn transition-all duration-250 ease-in-out">
             <FileSort groupedFiles={groupedFiles} />
           </div>
